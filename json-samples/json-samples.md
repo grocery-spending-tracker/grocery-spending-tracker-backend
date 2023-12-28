@@ -4,7 +4,7 @@
 
 ```json
 {
-    "userID": "stang",
+    "userId": "stang",
     "location": null,
     "dateTime": null,
     "items": [
@@ -29,10 +29,19 @@
 
 ```json
 {
-    "userID":"stang",
     "email":"tangs50@mcmaster.ca",
     "password":"password123",
     "firstName":"Sawyer",
     "lastName":"Tang"
+}
+```
+
+### `/users/{userId}/add-location`
+
+```json
+{
+    "name":"Home",
+    "latitude": 40.7128,
+    "longitude": -74.0060
 }
 ```
