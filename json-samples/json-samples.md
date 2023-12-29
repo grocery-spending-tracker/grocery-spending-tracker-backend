@@ -25,7 +25,7 @@
 }
 ```
 
-### BUILDING!!!! `/new-user`
+### BUILDING!!!! `/users/{userId}/new-user`
 
 ```json
 {
@@ -35,6 +35,7 @@
     "lastName":"Tang"
 }
 ```
+> note: encrypt password extra layer
 
 ### `/users/{userId}/add-location`
 
