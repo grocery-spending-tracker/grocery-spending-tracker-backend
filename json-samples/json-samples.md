@@ -1,10 +1,10 @@
 # json sample post bodies
 
-### `/submit-item-list`
+### `POST /users/{userId}/submit-trip` \*\*
 
 ```json
 {
-    "userId": "stang",
+    "userId": "400229786",
     "location": null,
     "dateTime": null,
     "items": [
@@ -25,7 +25,7 @@
 }
 ```
 
-### BUILDING!!!! `/users/{userId}/new-user`
+### `POST /users/new-user` \*\*
 
 ```json
 {
@@ -37,7 +37,14 @@
 ```
 > note: encrypt password extra layer
 
-### `/users/{userId}/add-location`
+### `POST /users/{userId}/get-user` \*\*
+
+### `POST /users/{userId}/update-user` \*\*
+
+### `POST /users/{userId}/delete-user` \*\*
+
+
+### `POST /users/{userId}/add-location` \*\*
 
 ```json
 {

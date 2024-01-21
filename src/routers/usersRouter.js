@@ -8,6 +8,10 @@ router.use((req, res, next) => {
   next()
 })
 
+router.get("/:userId", userController.getUserById)
+
 router.post("/:userId/add-location", userController.setLocation)
+
+router.post("/new-user", userController.setNewUser)
 
 module.exports = router

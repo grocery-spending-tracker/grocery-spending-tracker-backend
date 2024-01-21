@@ -5,11 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js"
+    "start": "node --env-file=.env src/app.js"
   },
   "author": "ST, AF, RY, JN",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "node-rsa": "^1.1.1",
+    "pg": "^8.11.3",
+    "pg-pool": "^3.6.1"
   }
 }
