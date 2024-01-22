@@ -25,14 +25,19 @@
 }
 ```
 
-### `POST /users/new-user` \*\*
+### `POST /users/new-user`
 
 ```json
 {
+    
+    "firstName":"Sawyer",
+    "lastName":"Tang",
     "email":"tangs50@mcmaster.ca",
     "password":"password123",
-    "firstName":"Sawyer",
-    "lastName":"Tang"
+    "homeBase":{
+        "longitude":40.712888,
+        "latitude":-74.006000
+    }
 }
 ```
 > note: encrypt password extra layer
