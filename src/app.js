@@ -2,41 +2,21 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+const router = express.Router()
+
+var rsa = require('./util/rsaCipher.js');
+
+console.log(rsa.getPublicKey())
+
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+const users = require('./routers/usersRouter.js')
 
-app.post('/submit-item-list', (req, res) => {
-    const userData = req.body;
-    console.log('Received data:', userData);
-    
-    // Process the data here
-    // ...
+app.use('/users', users)
 
-    res.status(200).send('Data received successfully');
-});
-
-app.post('/new-user', (req, res) => {
-    const userData = req.body;
-    console.log('Received data:', userData);
-    
-    // Process the data here
-    // ...
-
-    res.status(200).send('Data received successfully');
-});
-
-app.post('/set-user-location', (req, res) => {
-    const userData = req.body;
-    console.log('Received data:', userData);
-    
-    // Process the data here
-    // ...
-
-    res.status(200).send('Data received successfully');
-});
+// app.get('/', (req, res) => {
+//   res.send('Hello World!')
+// })
 
 
 app.listen(port, () => {
