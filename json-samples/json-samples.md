@@ -1,40 +1,15 @@
 # json sample post bodies
 
-### `POST /users/{userId}/submit-trip` \*\*
-
-```json
-{
-    "userId": "400229786",
-    "location": null,
-    "dateTime": null,
-    "items": [
-        {
-            "name": "ritz_crackers",
-            "price": 3.99,
-            "quantity": 2,
-            "itemID": "idk-what-this-will-be-1"
-        },
-        {
-            "name": "oreo",
-            "price": 4.98,
-            "quantity": 1,
-            "itemID": "idk-what-this-will-be-2"
-        }
-    ]
-
-}
-```
-
 ### `POST /users/new-user`
 
 ```json
 {
     
-    "firstName":"Sawyer",
-    "lastName":"Tang",
+    "first_name":"Sawyer",
+    "last_name":"Tang",
     "email":"tangs50@mcmaster.ca",
     "password":"password123",
-    "homeBase":{
+    "home_base":{
         "longitude":40.712888,
         "latitude":-74.006000
     }
@@ -42,19 +17,41 @@
 ```
 > note: encrypt password extra layer
 
-### `POST /users/{userId}/get-user` \*\*
+### `GET /users/{userId}` \*\*
 
-### `POST /users/{userId}/update-user` \*\*
+### `PATCH /users/{userId}` \*\*
+```json
+{
+    
+    "first_name":"Oscar",
+    "last_name":"Williams",
+    "_____OptionalValues_____": "_____..._____"
+}
+```
 
-### `POST /users/{userId}/delete-user` \*\*
+### `DELETE /users/{userId}/delete-user` \*\*
 
-
-### `POST /users/{userId}/add-location` \*\*
+### `POST /users/{userId}/submit-trip` \*\*
 
 ```json
 {
-    "name":"Home",
-    "latitude": 40.7128,
-    "longitude": -74.0060
+    "date_time": "2024-01-21 14:30:00",
+    "location": "1579 Main St W, Hamilton, ON L8S 1E6",
+    "items": [
+        {
+            "item_desc": "ritz_crackers",
+            "price": 3.99,
+            "taxed": true
+        },
+        {
+            "item_desc": "oreo",
+            "price": 4.98,
+            "taxed": true
+        }
+    ],
+    "subtotal": 8.97,
+    "total": 10.32,
+    "trip_desc": "bought some junk at the store"
+
 }
 ```
