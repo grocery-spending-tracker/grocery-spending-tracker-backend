@@ -1,30 +1,5 @@
 # json sample post bodies
 
-### `POST /users/{userId}/submit-trip` \*\*
-
-```json
-{
-    "userId": "400229786",
-    "location": null,
-    "date_time": null,
-    "items": [
-        {
-            "name": "ritz_crackers",
-            "price": 3.99,
-            "quantity": 2,
-            "itemID": "idk-what-this-will-be-1"
-        },
-        {
-            "name": "oreo",
-            "price": 4.98,
-            "quantity": 1,
-            "itemID": "idk-what-this-will-be-2"
-        }
-    ]
-
-}
-```
-
 ### `POST /users/new-user`
 
 ```json
@@ -56,13 +31,27 @@
 
 ### `DELETE /users/{userId}/delete-user` \*\*
 
-
-### `POST /users/{userId}/add-location` \*\*
+### `POST /users/{userId}/submit-trip` \*\*
 
 ```json
 {
-    "name":"Home",
-    "latitude": 40.7128,
-    "longitude": -74.0060
+    "date_time": "2024-01-21 14:30:00",
+    "location": "1579 Main St W, Hamilton, ON L8S 1E6",
+    "items": [
+        {
+            "item_desc": "ritz_crackers",
+            "price": 3.99,
+            "taxed": true
+        },
+        {
+            "item_desc": "oreo",
+            "price": 4.98,
+            "taxed": true
+        }
+    ],
+    "subtotal": 8.97,
+    "total": 10.32,
+    "trip_desc": "bought some junk at the store"
+
 }
 ```

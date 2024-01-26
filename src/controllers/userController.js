@@ -15,8 +15,8 @@ const setNewUser = ((req, res) => {
                 res.status(500).send('Database Error ' + err);
                 return;
             }
-            console.log('Query result:', result.rows);
-            res.status(200).json(result.rows);
+            console.log('Query result:', result.rows[0]);
+            res.status(200).json(result.rows[0]);
         });
 
     }catch (e){
@@ -43,11 +43,12 @@ const getUserById = ((req, res) => {
             }
 
             if (result.rows.length === 0) {
-                res.status(500).send('No user found with userId: ', userId);
+                res.status(500).send('No user found with userId: ' + userId);
+                return;
             }
 
-            console.log('Query result:', result.rows);
-            res.status(200).json(result.rows);
+            console.log('Query result:', result.rows[0]);
+            res.status(200).send(result.rows[0]);
         });
 
     } catch (error) {
@@ -86,8 +87,8 @@ const updateUserById = ((req, res) => {
                 return;
             }
 
-            console.log('Query result:', result.rows);
-            res.status(200).json(result.rows);
+            console.log('Query result:', result.rows[0]);
+            res.status(200).json(result.rows[0]);
         });
 
     } catch (error) {
@@ -117,8 +118,8 @@ const deleteUserById = ((req, res) => {
                 res.status(500).send('No user found with userId: ', userId);
             }
 
-            console.log('Query result:', result.rows);
-            res.status(200).json(result.rows);
+            console.log('Query result:', result.rows[0]);
+            res.status(200).json(result.rows[0]);
         });
 
     } catch (error) {
@@ -127,6 +128,62 @@ const deleteUserById = ((req, res) => {
     }
 
 })
+
+const addTrip = ((req, res) => {
+    try{
+        const userId = req.params.userId;
+        const tripData = req.body;
+
+        console.log("received request for new trip for user_id:", userId , "\nbody: ", tripData);
+
+        const query = 'INSERT INTO trips (user_id, date_time, location, subtotal, total, trip_desc) VALUES ($1, $2, $3, $4, $5, $6) RETURNING trip_id';
+        const values = [userId, tripData.date_time, tripData.location, tripData.subtotal, tripData.total, tripData.trip_desc];
+
+        var response = {};
+
+        pool.query(query, values, (err, result) => {
+            if (err) {
+                console.error('Error executing query', err);
+                res.status(500).send('Database Error when adding trip: ' + err);
+                return;
+            }
+            response["trip_id"] = result.rows[0]["trip_id"];
+
+            tripData.items.forEach((item) => {
+                var id = addItem(item, response["trip_id"]);
+            });
+
+            console.log('Query result:', response);
+            res.status(200).json(response);
+
+        });
+
+    }catch (e){
+        console.error(e);
+        res.status(500).send('Server error');
+    }
+
+})
+
+function addItem(item, tripId){
+
+    const query = 'INSERT INTO items (trip_id, item_desc, price, taxed) VALUES ($1, $2, $3, $4) RETURNING item_id';
+    const values = [tripId, item.item_desc, item.price, item.taxed];
+
+    pool.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Error executing query', err);
+            res.status(500).send('Database Error when adding item: ' + err);
+            return;
+        }
+        return result.rows[0]["item_id"];
+    });
+
+
+
+}
+
+
 
 // DEPRECIATED
 const setLocation = ((req, res) => {
@@ -158,5 +215,6 @@ module.exports = {
     setNewUser,
     getUserById,
     updateUserById,
-    deleteUserById
+    deleteUserById,
+    addTrip
 }
