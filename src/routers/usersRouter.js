@@ -10,8 +10,13 @@ router.use((req, res, next) => {
 
 router.get("/:userId", userController.getUserById)
 
-router.post("/:userId/add-location", userController.setLocation)
-
 router.post("/new-user", userController.setNewUser)
+
+router.patch("/:userId", userController.updateUserById)
+
+router.delete("/:userId", userController.deleteUserById)
+
+
+// router.get("/userIdByEmail", userController.getUserIdByEmail)
 
 module.exports = router

@@ -6,7 +6,7 @@
 {
     "userId": "400229786",
     "location": null,
-    "dateTime": null,
+    "date_time": null,
     "items": [
         {
             "name": "ritz_crackers",
@@ -30,11 +30,11 @@
 ```json
 {
     
-    "firstName":"Sawyer",
-    "lastName":"Tang",
+    "first_name":"Sawyer",
+    "last_name":"Tang",
     "email":"tangs50@mcmaster.ca",
     "password":"password123",
-    "homeBase":{
+    "home_base":{
         "longitude":40.712888,
         "latitude":-74.006000
     }
@@ -42,11 +42,19 @@
 ```
 > note: encrypt password extra layer
 
-### `POST /users/{userId}/get-user` \*\*
+### `GET /users/{userId}` \*\*
 
-### `POST /users/{userId}/update-user` \*\*
+### `PATCH /users/{userId}` \*\*
+```json
+{
+    
+    "first_name":"Oscar",
+    "last_name":"Williams",
+    "_____OptionalValues_____": "_____..._____"
+}
+```
 
-### `POST /users/{userId}/delete-user` \*\*
+### `DELETE /users/{userId}/delete-user` \*\*
 
 
 ### `POST /users/{userId}/add-location` \*\*

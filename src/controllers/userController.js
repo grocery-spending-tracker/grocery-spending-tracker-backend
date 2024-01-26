@@ -1,10 +1,36 @@
 const pool = require('../db.js');
 
+const setNewUser = ((req, res) => {
+    try{
+        const userData = req.body;
+
+        console.log("received request for new user ", userData.email, "\nbody: ", userData);
+
+        const query = 'INSERT INTO users (first_name, last_name, email, password, home_base_lon, home_base_lat) VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id';
+        const values = [userData.firstName, userData.lastName, userData.email, userData.password, userData.homeBase.longitude, userData.homeBase.latitude];
+
+        pool.query(query, values, (err, result) => {
+            if (err) {
+                console.error('Error executing query', err);
+                res.status(500).send('Database Error ' + err);
+                return;
+            }
+            console.log('Query result:', result.rows);
+            res.status(200).json(result.rows);
+        });
+
+    }catch (e){
+        console.error(e);
+        res.status(500).send('Server error');
+    }
+
+})
+
 const getUserById = ((req, res) => {
     try {
         const userId = req.params.userId;
 
-        console.log("received request user with userId: ", userId);
+        console.log("received request to get user with userId: ", userId);
 
         const query = 'SELECT * FROM users WHERE user_id = $1';
         const values = [userId];
@@ -31,14 +57,27 @@ const getUserById = ((req, res) => {
 
 })
 
-const setNewUser = ((req, res) => {
-    try{
+const updateUserById = ((req, res) => {
+    try {
+        const userId = req.params.userId;
         const userData = req.body;
 
-        console.log("received request for new user ", userData.email, "\nbody: ", userData);
+        console.log("received request to update user with userId: ", userId);
 
-        const query = 'INSERT INTO users (first_name, last_name, email, password, home_base_lon, home_base_lat) VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id';
-        const values = [userData.firstName, userData.lastName, userData.email, userData.password, userData.homeBase.longitude, userData.homeBase.latitude];
+        if("home_base" in userData){
+            userData["home_base_lon"] = userData.home_base["longitude"];
+            userData["home_base_lat"] = userData.home_base["latitude"];
+            delete userData["home_base"];
+        }
+
+        const setClauses = Object.keys(userData)
+            .map((key, index) => `${key} = $${index + 2}`)
+            .join(', ');
+
+        
+
+        const query = `UPDATE users SET ${setClauses} WHERE user_id = $1 RETURNING *`;
+        const values = [userId, ...Object.values(userData)];
 
         pool.query(query, values, (err, result) => {
             if (err) {
@@ -46,13 +85,45 @@ const setNewUser = ((req, res) => {
                 res.status(500).send('Database Error ' + err);
                 return;
             }
+
             console.log('Query result:', result.rows);
             res.status(200).json(result.rows);
         });
 
-    }catch (e){
-        console.error(e);
-        res.status(500).send('Server error');
+    } catch (error) {
+        console.error('Error updating user:', error);
+        throw error;
+    }
+
+})
+
+const deleteUserById = ((req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        console.log("received request to delete user with userId: ", userId);
+
+        const query = 'DELETE FROM users WHERE user_id = $1 RETURNING *';
+        const values = [userId];
+
+        pool.query(query, values, (err, result) => {
+            if (err) {
+                console.error('Error executing query', err);
+                res.status(500).send('Database Error ' + err);
+                return;
+            }
+
+            if (result.rows.length === 0) {
+                res.status(500).send('No user found with userId: ', userId);
+            }
+
+            console.log('Query result:', result.rows);
+            res.status(200).json(result.rows);
+        });
+
+    } catch (error) {
+        console.error('Error retrieving user by ID:', error);
+        throw error;
     }
 
 })
@@ -83,10 +154,9 @@ const setLocation = ((req, res) => {
 
 })
 
-
-
 module.exports = {
-  getUserById,
-  setLocation,
-  setNewUser
+    setNewUser,
+    getUserById,
+    updateUserById,
+    deleteUserById
 }
