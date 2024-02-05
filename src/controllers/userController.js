@@ -179,8 +179,6 @@ function addItem(item, tripId){
         return result.rows[0]["item_id"];
     });
 
-
-
 }
 
 
