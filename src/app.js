@@ -16,9 +16,9 @@ const auth = require('./routers/authenticationRouter.js')
 app.use('/users', users)
 app.use('/auth', auth)
 
-// app.get('/', (req, res) => {
-//   res.send('Hello World!')
-// })
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
 
 app.listen(port, () => {
