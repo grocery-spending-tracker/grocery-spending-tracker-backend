@@ -11,8 +11,10 @@ console.log(rsa.getPublicKey())
 app.use(express.json());
 
 const users = require('./routers/usersRouter.js')
+const auth = require('./routers/authenticationRouter.js')
 
 app.use('/users', users)
+app.use('/auth', auth)
 
 // app.get('/', (req, res) => {
 //   res.send('Hello World!')
