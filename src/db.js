@@ -5,7 +5,7 @@ const pool = new Pool({
     host: process.env.AZURE_POSTGRESQL_HOST,
     database: process.env.AZURE_POSTGRESQL_DATABASE,
     password: process.env.AZURE_POSTGRESQL_PASSWORD,
-    port: process.env.AZURE_POSTGRESQL_PORT
+    port: process.env.AZURE_POSTGRESQL_PORT,
     ssl: process.env.AZURE_POSTGRESQL_SSL
 });
 
