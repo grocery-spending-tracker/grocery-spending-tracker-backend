@@ -199,8 +199,8 @@ const addTrip = ((req, res) => {
 
 function addItem(item, tripId){
 
-    const query = 'INSERT INTO items (trip_id, item_desc, price, taxed) VALUES ($1, $2, $3, $4) RETURNING item_id';
-    const values = [tripId, item.item_desc, item.price, item.taxed];
+    const query = 'INSERT INTO items (trip_id, item_desc, item_key, price, taxed) VALUES ($1, $2, $3, $4, $5) RETURNING item_id';
+    const values = [tripId, item.item_desc, item.item_key, item.price, item.taxed];
 
     pool.query(query, values, (err, result) => {
         if (err) {
