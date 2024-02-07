@@ -10,59 +10,41 @@ const signOptions = {
 };
 
 const getKey = ((req, res) => {
-try {
-    const userData = req.body;
+    try {
+        const userData = req.body;
 
         console.log("received get request for token on user: " + userData.user_id);
 
-        if (verifyCredentials(userData.user_id, userData.password)) {
+        const query = "SELECT EXISTS (SELECT 1 FROM users WHERE user_id = $1 AND password = $2) AS user_exists";
+        const values = [userData.user_id, userData.password];
+        //SELECT EXISTS (SELECT 1 FROM usersWHERE user_id = $1 AND password = $2) AS user_exists;
+
+        
+
+        pool.query(query, values, (err, result) => {
+            if (err) {
+                console.error('Error executing query', err);
+                res.status(500).send('Database Error ' + err);
+                return;
+            }
+
+            if (!result.rows[0]["user_exists"]) {
+                res.status(500).send('Incorrect credentials for user: ' + userData.user_id);
+                return;
+            }
+
+
+
             const token = jwt.sign({ username: userData.user_id }, JWT_PRIVATE, signOptions); // Expires in 1 hour
             console.log('Token:', token);
             res.json({ token });
-        } else {
-            res.status(401).send('Username or password is incorrect');
-        }
+        });
 
     } catch (e) {
         console.error(e);
         res.status(500).send('Server error');
     }
 })
-
-
-// return true if password exists
-function verifyCredentials(userId, password){
-
-    // get password
-
-    const user = {}//users.find(u => u.user_id === user_id && u.password === password);
-
-    //temp
-    user.user_id = userId
-    ///
-
-    // decrypt
-
-    // compare
-
-    // respont
-
-    
-    return true;
-
-    // const query = 'INSERT INTO items (trip_id, item_desc, price, taxed) VALUES ($1, $2, $3, $4) RETURNING item_id';
-    // const values = [tripId, item.item_desc, item.price, item.taxed];
-
-    // pool.query(query, values, (err, result) => {
-    //     if (err) {
-    //         console.error('Error executing query', err);
-    //         res.status(500).send('Database Error when adding item: ' + err);
-    //         return;
-    //     }
-    //     return result.rows[0]["item_id"];
-    // });
-
-}
 
 module.exports = {
   getKey

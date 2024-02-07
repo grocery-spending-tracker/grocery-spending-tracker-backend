@@ -1,17 +1,27 @@
 const pool = require('../db.js');
-const jwt = require('jsonwebtoken');
-const fs = require('fs');
 
-const JWT_PUBLIC = process.env.JWT_PUBLIC.replace(/\\n/g, '\n') || fs.readFileSync('public_key.pem', 'utf8');
+const fs = require('fs');
+const auth = require('../util/authentication.js');
+
 
 const setNewUser = ((req, res) => {
     try{
         const userData = req.body;
 
+        // if(!auth.authenticateRequest(req, res)) return;
+
         console.log("received request for new user ", userData.email, "\nbody: ", userData);
 
-        const query = 'INSERT INTO users (first_name, last_name, email, password, home_base_lon, home_base_lat) VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id';
-        const values = [userData.firstName, userData.lastName, userData.email, userData.password, userData.homeBase.longitude, userData.homeBase.latitude];
+        const query = 'INSERT INTO users (first_name, last_name, email, password, birth_date, home_base_lon, home_base_lat) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING user_id';
+        const values = [
+            userData.first_name, 
+            userData.last_name, 
+            userData.email, 
+            userData.password, 
+            userData.birth_date,
+            userData.home_base.longitude, 
+            userData.home_base.latitude
+            ];
 
         pool.query(query, values, (err, result) => {
             if (err) {
@@ -33,20 +43,8 @@ const getUserById = ((req, res) => {
     try {
         const userId = req.params.userId;
 
-        const authToken = req.headers['authtoken'];
-
-        if (!authToken) {
-            return res.status(401).send('No auth token provided');
-        }
-
-        if(!validateToken(authToken)){
-            console.log("Request Unauthorized: invalid token");
-            res.status(401).send("Unauthorized");
-            return;
-        }
-
-        console.log("Authenticated 🔐");
-
+        if(auth.authenticateRequest(req, res) < 0) return;
+    
         console.log("received request to get user with userId: ", userId);
 
         const query = 'SELECT * FROM users WHERE user_id = $1';
@@ -80,6 +78,8 @@ const updateUserById = ((req, res) => {
         const userId = req.params.userId;
         const userData = req.body;
 
+        if(auth.authenticateRequest(req, res) < 0) return;
+
         console.log("received request to update user with userId: ", userId);
 
         if("home_base" in userData){
@@ -91,8 +91,6 @@ const updateUserById = ((req, res) => {
         const setClauses = Object.keys(userData)
             .map((key, index) => `${key} = $${index + 2}`)
             .join(', ');
-
-        
 
         const query = `UPDATE users SET ${setClauses} WHERE user_id = $1 RETURNING *`;
         const values = [userId, ...Object.values(userData)];
@@ -119,6 +117,15 @@ const deleteUserById = ((req, res) => {
     try {
         const userId = req.params.userId;
 
+        const callingUser = auth.authenticateRequest(req, res);
+
+        if(callingUser < 0) return;
+
+        if(callingUser != userId && callingUser != 1){ //TODO: sussy
+            res.status(500).send('Can only delete yourself');
+            return;
+        }
+
         console.log("received request to delete user with userId: ", userId);
 
         const query = 'DELETE FROM users WHERE user_id = $1 RETURNING *';
@@ -132,7 +139,8 @@ const deleteUserById = ((req, res) => {
             }
 
             if (result.rows.length === 0) {
-                res.status(500).send('No user found with userId: ', userId);
+                res.status(500).send('No user found with userId: ' + userId);
+                return;
             }
 
             console.log('Query result:', result.rows[0]);
@@ -150,6 +158,8 @@ const addTrip = ((req, res) => {
     try{
         const userId = req.params.userId;
         const tripData = req.body;
+
+        if(auth.authenticateRequest(req, res) < 0) return;
 
         console.log("received request for new trip for user_id:", userId , "\nbody: ", tripData);
 
@@ -197,51 +207,25 @@ function addItem(item, tripId){
 
 }
 
-function validateToken(token){
-    // console.log(header);
-    
-     try {
-        // token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6MSwiaWF0IjoxNzA3MjU2NTYxLCJleHAiOjE3MDcyNjczNjF9.abB2ln1ajZdqxO_qw7CdzWwkcyLHZP7wkcISFF7ob1A";
-          const jt = jwt.verify(token, JWT_PUBLIC, { algorithm: ['RS256'] });
-            console.log(jt);
-          //do something
-     } catch (error) {
-        console.log("Token Validation Error: " + error);
-          return false;
-     }
-     return true;
-}
-
-function authenticate(req, res){
-
-}
 
 
-// DEPRECIATED
-const setLocation = ((req, res) => {
-    try {
-        const userId = req.params.userId;
-        const { name, latitude, longitude } = req.body;
+// function authenticateRequest(req, res){
+//     const authToken = req.headers['authtoken'];
 
-        console.log("received location set for user: " + userId);
+//     if (!authToken) {
+//         res.status(401).send('No auth token provided');
+//         return false;
+//     }
 
-        // Validate latitude and longitude
-        if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-            return res.status(400).send('Invalid latitude or longitude values.');
-        }
+//     if(!validateToken(authToken)){
+//         console.log("Request Unauthorized: invalid token");
+//         res.status(401).send("Unauthorized");
+//         return false;
+//     }
 
-        // const query = 'INSERT INTO locations (user_id, name, geo_point) VALUES ($1, $2, ST_SetSRID(ST_Point($3, $4), 4326))';
-        // const values = [userId, name, longitude, latitude];
-
-        // await pool.query(query, values);
-
-        res.status(200).send('Location added successfully for user ' + userId);
-    } catch (e) {
-        console.error(e);
-        res.status(500).send('Server error');
-    }
-
-})
+//     console.log("Authenticated 🔐");
+//     return true;
+// }
 
 module.exports = {
     setNewUser,
