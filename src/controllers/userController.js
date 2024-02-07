@@ -1,8 +1,6 @@
 const pool = require('../db.js');
-
 const fs = require('fs');
 const auth = require('../util/authentication.js');
-
 
 const setNewUser = ((req, res) => {
     try{
@@ -39,6 +37,7 @@ const setNewUser = ((req, res) => {
     }
 });
 
+// TODO: for debugging only DEV
 const getUserById = ((req, res) => {
     try {
         const userId = req.params.userId;
@@ -70,15 +69,20 @@ const getUserById = ((req, res) => {
         console.error('Error retrieving user by ID:', error);
         throw error;
     }
-
-})
+});
 
 const updateUserById = ((req, res) => {
     try {
         const userId = req.params.userId;
         const userData = req.body;
 
-        if(auth.authenticateRequest(req, res) < 0) return;
+        const callingUser = auth.authenticateRequest(req, res);
+        if(callingUser < 0) return;
+
+        if(callingUser != userId && callingUser != 1){ //TODO: sussy
+            res.status(500).send('Can only update for yourself');
+            return;
+        }
 
         console.log("received request to update user with userId: ", userId);
 
@@ -110,15 +114,13 @@ const updateUserById = ((req, res) => {
         console.error('Error updating user:', error);
         throw error;
     }
-
-})
+});
 
 const deleteUserById = ((req, res) => {
     try {
         const userId = req.params.userId;
 
         const callingUser = auth.authenticateRequest(req, res);
-
         if(callingUser < 0) return;
 
         if(callingUser != userId && callingUser != 1){ //TODO: sussy
@@ -151,15 +153,20 @@ const deleteUserById = ((req, res) => {
         console.error('Error retrieving user by ID:', error);
         throw error;
     }
-
-})
+});
 
 const addTrip = ((req, res) => {
     try{
         const userId = req.params.userId;
         const tripData = req.body;
 
-        if(auth.authenticateRequest(req, res) < 0) return;
+        const callingUser = auth.authenticateRequest(req, res);
+        if(callingUser < 0) return;
+
+        if(callingUser != userId && callingUser != 1){ //TODO: sussy
+            res.status(500).send('Can only add trip for yourself');
+            return;
+        }
 
         console.log("received request for new trip for user_id:", userId , "\nbody: ", tripData);
 
@@ -188,8 +195,7 @@ const addTrip = ((req, res) => {
         console.error(e);
         res.status(500).send('Server error');
     }
-
-})
+});
 
 function addItem(item, tripId){
 
@@ -206,26 +212,6 @@ function addItem(item, tripId){
     });
 
 }
-
-
-
-// function authenticateRequest(req, res){
-//     const authToken = req.headers['authtoken'];
-
-//     if (!authToken) {
-//         res.status(401).send('No auth token provided');
-//         return false;
-//     }
-
-//     if(!validateToken(authToken)){
-//         console.log("Request Unauthorized: invalid token");
-//         res.status(401).send("Unauthorized");
-//         return false;
-//     }
-
-//     console.log("Authenticated 🔐");
-//     return true;
-// }
 
 module.exports = {
     setNewUser,

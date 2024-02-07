@@ -1,13 +1,8 @@
 const pool = require('../db.js');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const auth = require('../util/authentication.js');
 
-const JWT_PRIVATE = process.env.JWT_PRIVATE.replace(/\\n/g, '\n') || fs.readFileSync('private_key.pem', 'utf8');
-
-const signOptions = {
-    expiresIn: '1h', // Token expires in 1 hour
-    algorithm: 'RS256' // Use RSASSA-PKCS1-v1_5
-};
 
 const getKey = ((req, res) => {
     try {
@@ -17,9 +12,6 @@ const getKey = ((req, res) => {
 
         const query = "SELECT EXISTS (SELECT 1 FROM users WHERE user_id = $1 AND password = $2) AS user_exists";
         const values = [userData.user_id, userData.password];
-        //SELECT EXISTS (SELECT 1 FROM usersWHERE user_id = $1 AND password = $2) AS user_exists;
-
-        
 
         pool.query(query, values, (err, result) => {
             if (err) {
@@ -33,10 +25,8 @@ const getKey = ((req, res) => {
                 return;
             }
 
+            const token = auth.signToken(userData.user_id);
 
-
-            const token = jwt.sign({ username: userData.user_id }, JWT_PRIVATE, signOptions); // Expires in 1 hour
-            console.log('Token:', token);
             res.json({ token });
         });
 
