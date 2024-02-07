@@ -2,11 +2,13 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000;
 
+// require('dotenv').config();
+
 const router = express.Router()
 
 var rsa = require('./util/rsaCipher.js');
 
-console.log(rsa.getPublicKey())
+// console.log(rsa.getPublicKey())
 
 app.use(express.json());
 
