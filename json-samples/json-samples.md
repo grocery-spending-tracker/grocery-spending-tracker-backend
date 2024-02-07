@@ -55,3 +55,11 @@
 
 }
 ```
+
+### `POST /auth/login`
+```json
+{
+    "user_id":1,
+    "password":"password123"
+}
+```

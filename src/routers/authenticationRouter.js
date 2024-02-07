@@ -8,6 +8,6 @@ router.use((req, res, next) => {
   next()
 })
 
-router.get("/get-token", authController.getKey)
+router.post("/login", authController.getKey)
 
 module.exports = router

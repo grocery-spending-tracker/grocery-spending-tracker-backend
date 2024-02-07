@@ -1,4 +1,9 @@
 const pool = require('../db.js');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+
+const JWT_PUBLIC = process.env.JWT_PUBLIC || fs.readFileSync('public_key.pem', 'utf8');
+
 
 const setNewUser = ((req, res) => {
     try{
@@ -29,6 +34,20 @@ const setNewUser = ((req, res) => {
 const getUserById = ((req, res) => {
     try {
         const userId = req.params.userId;
+
+        const authToken = req.headers['authtoken'];
+
+        // console.log(authToken);
+
+        if (!authToken) {
+            return res.status(401).send('No auth token provided');
+        }
+
+        if(!validateToken(authToken)){
+            console.log("Request Unauthorized: invalid token");
+            res.status(401).send("Unauthorized");
+            return;
+        }
 
         console.log("received request to get user with userId: ", userId);
 
@@ -181,6 +200,20 @@ function addItem(item, tripId){
 
 }
 
+function validateToken(token){
+    // console.log(header);
+    
+     try {
+        // token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6MSwiaWF0IjoxNzA3MjU2NTYxLCJleHAiOjE3MDcyNjczNjF9.abB2ln1ajZdqxO_qw7CdzWwkcyLHZP7wkcISFF7ob1A";
+          const jt = jwt.verify(token, JWT_PUBLIC, { algorithm: ['RS256'] });
+            console.log(jt);
+          //do something
+     } catch (error) {
+        console.log("Token Validation Error: " + error);
+          return false;
+     }
+     return true;
+}
 
 
 // DEPRECIATED
