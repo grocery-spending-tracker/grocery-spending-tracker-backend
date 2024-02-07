@@ -47,18 +47,19 @@
         {
             "item_desc": "ritz_crackers",
             "price": 3.99,
+            "item_key": "134527354",
             "taxed": true
         },
         {
             "item_desc": "oreo",
             "price": 4.98,
+            "item_key": "136764794",
             "taxed": true
         }
     ],
     "subtotal": 8.97,
     "total": 10.32,
     "trip_desc": "bought some junk at the store"
-
 }
 ```
 
