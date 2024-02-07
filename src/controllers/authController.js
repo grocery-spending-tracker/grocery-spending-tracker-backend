@@ -2,7 +2,8 @@ const pool = require('../db.js');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
-const JWT_PRIVATE = process.env.JWT_PRIVATE || fs.readFileSync('private_key.pem', 'utf8');
+const JWT_PRIVATE = process.env.JWT_PRIVATE.replace(/\\n/g, '\n') || fs.readFileSync('private_key.pem', 'utf8');
+
 const signOptions = {
     expiresIn: '1h', // Token expires in 1 hour
     algorithm: 'RS256' // Use RSASSA-PKCS1-v1_5
@@ -13,12 +14,6 @@ try {
     const userData = req.body;
 
         console.log("received get request for token on user: " + userData.user_id);
-
-        console.log(JWT_PRIVATE);
-
-
-        // const query = 'INSERT INTO locations (user_id, name, geo_point) VALUES ($1, $2, ST_SetSRID(ST_Point($3, $4), 4326))';
-        // const values = [userId, name, longitude, latitude];
 
         if (verifyCredentials(userData.user_id, userData.password)) {
             const token = jwt.sign({ username: userData.user_id }, JWT_PRIVATE, signOptions); // Expires in 1 hour
@@ -68,7 +63,6 @@ function verifyCredentials(userId, password){
     // });
 
 }
-
 
 module.exports = {
   getKey

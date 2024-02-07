@@ -2,8 +2,7 @@ const pool = require('../db.js');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
-const JWT_PUBLIC = process.env.JWT_PUBLIC || fs.readFileSync('public_key.pem', 'utf8');
-
+const JWT_PUBLIC = process.env.JWT_PUBLIC.replace(/\\n/g, '\n') || fs.readFileSync('public_key.pem', 'utf8');
 
 const setNewUser = ((req, res) => {
     try{
@@ -28,16 +27,13 @@ const setNewUser = ((req, res) => {
         console.error(e);
         res.status(500).send('Server error');
     }
-
-})
+});
 
 const getUserById = ((req, res) => {
     try {
         const userId = req.params.userId;
 
         const authToken = req.headers['authtoken'];
-
-        // console.log(authToken);
 
         if (!authToken) {
             return res.status(401).send('No auth token provided');
@@ -48,6 +44,8 @@ const getUserById = ((req, res) => {
             res.status(401).send("Unauthorized");
             return;
         }
+
+        console.log("Authenticated 🔐");
 
         console.log("received request to get user with userId: ", userId);
 
@@ -174,7 +172,6 @@ const addTrip = ((req, res) => {
 
             console.log('Query result:', response);
             res.status(200).json(response);
-
         });
 
     }catch (e){
@@ -213,6 +210,10 @@ function validateToken(token){
           return false;
      }
      return true;
+}
+
+function authenticate(req, res){
+
 }
 
 
