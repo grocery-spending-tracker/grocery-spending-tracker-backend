@@ -69,3 +69,5 @@
     "password":"password123"
 }
 ```
+- Will return a token.
+- Apply this token to all subsequent userspecific calls in the header with key 'auth'
