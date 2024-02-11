@@ -10,15 +10,12 @@ const setNewUser = ((req, res) => {
 
         console.log("received request for new user ", userData.email, "\nbody: ", userData);
 
-        const query = 'INSERT INTO users (first_name, last_name, email, password, birth_date, home_base_lon, home_base_lat) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING user_id';
+        const query = 'INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING user_id';
         const values = [
             userData.first_name, 
             userData.last_name, 
             userData.email, 
-            userData.password, 
-            userData.birth_date,
-            userData.home_base.longitude, 
-            userData.home_base.latitude
+            userData.password
             ];
 
         pool.query(query, values, (err, result) => {
