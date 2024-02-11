@@ -9,6 +9,8 @@ router.use((req, res, next) => {
     next()
 })
 
+router.get("/my-trips", userController.getTrips)
+
 router.get("/:userId", userController.getUserById)
 
 router.post("/new-user", userController.setNewUser)
@@ -18,6 +20,8 @@ router.patch("/:userId", userController.updateUserById)
 router.delete("/:userId", userController.deleteUserById)
 
 router.post("/:userId/submit-trip", userController.addTrip)
+
+
 
 // router.get("/userIdByEmail", userController.getUserIdByEmail)
 
