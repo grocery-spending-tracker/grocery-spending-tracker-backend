@@ -15,16 +15,10 @@ npm run start
 
 ```json
 {
-    
     "first_name":"Sawyer",
     "last_name":"Tang",
     "email":"tangs50@mcmaster.ca",
-    "password":"password123",
-    "birth_date":"2011-02-20",
-    "home_base":{
-        "longitude":40.712888,
-        "latitude":-74.006000
-    }
+    "password":"password123"
 }
 ```
 > note: encrypt password extra layer
@@ -40,6 +34,11 @@ npm run start
     
     "first_name":"Oscar",
     "last_name":"Williams",
+    "birth_date":"2011-02-20",
+    "home_base":{
+        "longitude":40.712888,
+        "latitude":-74.006000
+    },
     "_____OptionalValues_____": "_____..._____"
 }
 ```
@@ -58,25 +57,26 @@ npm run start
         {
             "item_desc": "ritz_crackers",
             "price": 3.99,
+            "item_key": "134527354",
             "taxed": true
         },
         {
             "item_desc": "oreo",
             "price": 4.98,
+            "item_key": "136764794",
             "taxed": true
         }
     ],
     "subtotal": 8.97,
     "total": 10.32,
     "trip_desc": "bought some junk at the store"
-
 }
 ```
 
 ### `POST /auth/login`
 ```json
 {
-    "user_id":1,
+    "email":"uremail@mail.com",
     "password":"password123"
 }
 ```

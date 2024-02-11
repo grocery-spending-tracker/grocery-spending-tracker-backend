@@ -4,16 +4,10 @@
 
 ```json
 {
-    
     "first_name":"Sawyer",
     "last_name":"Tang",
     "email":"tangs50@mcmaster.ca",
-    "password":"password123",
-    "birth_date":"2011-02-20",
-    "home_base":{
-        "longitude":40.712888,
-        "latitude":-74.006000
-    }
+    "password":"password123"
 }
 ```
 > note: encrypt password extra layer
@@ -29,6 +23,11 @@
     
     "first_name":"Oscar",
     "last_name":"Williams",
+    "birth_date":"2011-02-20",
+    "home_base":{
+        "longitude":40.712888,
+        "latitude":-74.006000
+    },
     "_____OptionalValues_____": "_____..._____"
 }
 ```
@@ -66,7 +65,7 @@
 ### `POST /auth/login`
 ```json
 {
-    "user_id":1,
+    "email":"uremail@mail.com",
     "password":"password123"
 }
 ```
