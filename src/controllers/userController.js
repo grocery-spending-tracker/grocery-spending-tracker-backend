@@ -205,7 +205,7 @@ const getTrips = ((req, res) => {
 
         console.log("received request for get trip for user_id:", callingUser);
 
-        const query = 'SELECT * FROM trips WHERE user_id = $1';
+        const query = 'SELECT * FROM trips WHERE user_id = $1 ORDER BY date_time, trip_id';
         const values = [callingUser];
 
         // this block came from gpt4
