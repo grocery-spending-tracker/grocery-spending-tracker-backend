@@ -1,7 +1,11 @@
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
-const JWT_PUBLIC = process.env.JWT_PUBLIC.replace(/\\n/g, '\n') || fs.readFileSync('public_key.pem', 'utf8');
-const JWT_PRIVATE = process.env.JWT_PRIVATE.replace(/\\n/g, '\n') || fs.readFileSync('private_key.pem', 'utf8');
+// const JWT_PUBLIC = process.env.JWT_PUBLIC.replace(/\\n/g, '\n') || fs.readFileSync('public_key.pem', 'utf8');
+// const JWT_PRIVATE = process.env.JWT_PRIVATE.replace(/\\n/g, '\n') || fs.readFileSync('private_key.pem', 'utf8');
+
+const JWT_PUBLIC = process.env.JWT_PUBLIC ? process.env.JWT_PUBLIC.replace(/\\n/g, '\n') : fs.readFileSync('public_key.pem', 'utf8');
+const JWT_PRIVATE = process.env.JWT_PRIVATE ? process.env.JWT_PRIVATE.replace(/\\n/g, '\n') : fs.readFileSync('private_key.pem', 'utf8');
 
 const signOptions = {
     expiresIn: '1h', // Token expires in 1 hour
@@ -30,7 +34,7 @@ const authenticateRequest = ((req, res) => {
         return -1;
     }
 
-    console.log("Authenticated 🔐");
+    console.log("Authenticated 🔐 " + user_id);
     return user_id;
 });
 

@@ -73,6 +73,9 @@ npm run start
 }
 ```
 
+### `GET /users/my-trips` 
+>requires `auth = <jwt_token>` in header
+
 ### `POST /auth/login`
 ```json
 {

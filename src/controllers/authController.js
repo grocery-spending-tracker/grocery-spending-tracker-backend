@@ -1,8 +1,6 @@
 const pool = require('../db.js');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
 const auth = require('../util/authentication.js');
-
 
 const getKey = ((req, res) => {
     try {
@@ -29,7 +27,7 @@ const getKey = ((req, res) => {
             user_id = result.rows[0]["user_id"];
             email = result.rows[0]["email"];
 
-            const token = auth.signToken(userData.user_id);
+            const token = auth.signToken(user_id);
 
             res.json({ user_id, email, token });
         });

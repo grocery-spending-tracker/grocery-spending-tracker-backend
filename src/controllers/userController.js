@@ -194,6 +194,51 @@ const addTrip = ((req, res) => {
     }
 });
 
+const getTrips = ((req, res) => {
+
+    try{
+        const userId = req.params.userId;
+        const tripData = req.body;
+
+        const callingUser = auth.authenticateRequest(req, res);
+        if(callingUser < 0) return;
+
+        console.log("received request for get trip for user_id:", callingUser);
+
+        const query = 'SELECT * FROM trips WHERE user_id = $1 ORDER BY date_time, trip_id';
+        const values = [callingUser];
+
+        // this block came from gpt4
+        pool.query(query, values)
+            .then(tripsRes => {
+                // Map each trip to a Promise that resolves with the trip and its items
+                const tripItemPromises = tripsRes.rows.map(trip => {
+                const itemsQuery = `SELECT * FROM items WHERE trip_id = $1;`;
+                return pool.query(itemsQuery, [trip.trip_id])
+                    .then(itemsRes => {
+                        return { ...trip, items: itemsRes.rows }; // Combine trip with its items
+                    });
+                });
+              
+                // Wait for all trip-item combinations to be resolved
+                return Promise.all(tripItemPromises);
+            })
+            .then(tripsWithItems => {
+                console.log('Query result:', JSON.stringify(tripsWithItems, null, 2));
+                res.status(200).json(tripsWithItems);
+                // You can return or process tripsWithItems as needed here
+            })
+            .catch(err => {
+                console.error('Error executing query', err.stack);
+            });
+
+    }catch (e){
+        console.error(e);
+        res.status(500).send('Server error');
+    }
+
+});
+
 function addItem(item, tripId){
 
     const query = 'INSERT INTO items (trip_id, item_desc, item_key, price, taxed) VALUES ($1, $2, $3, $4, $5) RETURNING item_id';
@@ -215,5 +260,6 @@ module.exports = {
     getUserById,
     updateUserById,
     deleteUserById,
-    addTrip
+    addTrip,
+    getTrips
 }
