@@ -10,8 +10,8 @@ const getKey = ((req, res) => {
 
         console.log("received get request for token on user: " + userData.user_id);
 
-        const query = "SELECT EXISTS (SELECT 1 FROM users WHERE user_id = $1 AND password = $2) AS user_exists";
-        const values = [userData.user_id, userData.password];
+        const query = "SELECT user_id, email FROM users WHERE email = $1 AND password = $2";
+        const values = [userData.email, userData.password];
 
         pool.query(query, values, (err, result) => {
             if (err) {
@@ -20,14 +20,18 @@ const getKey = ((req, res) => {
                 return;
             }
 
-            if (!result.rows[0]["user_exists"]) {
-                res.status(500).send('Incorrect credentials for user: ' + userData.user_id);
+            if (result.rows[0] == null) {
+                res.status(500).send('Incorrect credentials for user: ' + userData.email);
                 return;
             }
 
+            console.log(result.rows[0]["user_id"]);
+            user_id = result.rows[0]["user_id"];
+            email = result.rows[0]["email"];
+
             const token = auth.signToken(userData.user_id);
 
-            res.json({ token });
+            res.json({ user_id, email, token });
         });
 
     } catch (e) {
