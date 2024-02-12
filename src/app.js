@@ -14,9 +14,13 @@ app.use(express.json());
 
 const users = require('./routers/usersRouter.js')
 const auth = require('./routers/authenticationRouter.js')
+const classification = require('./routers/classificationRouter.js')
+const recommendation = require('./routers/recommendationRouter.js')
 
 app.use('/users', users)
 app.use('/auth', auth)
+app.use('/classification', classification)
+app.use('/recommendation', recommendation)
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
