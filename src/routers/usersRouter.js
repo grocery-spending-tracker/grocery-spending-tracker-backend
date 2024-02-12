@@ -9,19 +9,18 @@ router.use((req, res, next) => {
     next()
 })
 
+// separate?
+router.post("/goals", userController.setGoal)
+router.get("/goals", userController.getGoals)
+
+// separate?
 router.get("/my-trips", userController.getTrips)
-
-router.get("/:userId", userController.getUserById)
-
-router.post("/new-user", userController.setNewUser)
-
-router.patch("/:userId", userController.updateUserById)
-
-router.delete("/:userId", userController.deleteUserById)
-
 router.post("/:userId/submit-trip", userController.addTrip)
 
-
+router.get("/:userId", userController.getUserById)
+router.post("/new-user", userController.setNewUser)
+router.patch("/:userId", userController.updateUserById)
+router.delete("/:userId", userController.deleteUserById)
 
 // router.get("/userIdByEmail", userController.getUserIdByEmail)
 

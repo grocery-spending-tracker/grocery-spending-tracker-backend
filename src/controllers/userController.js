@@ -152,6 +152,66 @@ const deleteUserById = ((req, res) => {
     }
 });
 
+const setGoal = ((req, res) => {
+    try{
+        const goalData = req.body;
+
+        const callingUser = auth.authenticateRequest(req, res);
+        if(callingUser < 0) return;
+
+        console.log("received request to set goal for user_id:", callingUser , "\nbody: ", goalData);
+
+        const query = 'INSERT INTO goals (user_id, start_date, end_date, budget) VALUES ($1, $2, $3, $4) RETURNING goal_id';
+        const values = [callingUser, goalData.start_date, goalData.end_date, goalData.budget];
+
+        var response = {};
+        pool.query(query, values, (err, result) => {
+            if (err) {
+                console.error('Error executing query', err);
+                res.status(500).send('Database Error when adding trip: ' + err);
+                return;
+            }
+
+            console.log('Query result:', result.rows[0]);
+            res.status(200).json(result.rows[0]);
+        });
+
+    }catch (e){
+        console.error(e);
+        res.status(500).send('Server error');
+    }
+});
+
+const getGoals = ((req, res) => {
+    try{
+        const goalData = req.body;
+
+        const callingUser = auth.authenticateRequest(req, res);
+        if(callingUser < 0) return;
+
+        console.log("received request to get goals for user_id:", callingUser);
+
+        const query = 'SELECT * FROM goals WHERE user_id = $1';
+        const values = [callingUser];
+
+        var response = {};
+        pool.query(query, values, (err, result) => {
+            if (err) {
+                console.error('Error executing query', err);
+                res.status(500).send('Database Error when adding trip: ' + err);
+                return;
+            }
+
+            console.log('Query result:', result.rows);
+            res.status(200).json(result.rows);
+        });
+
+    }catch (e){
+        console.error(e);
+        res.status(500).send('Server error');
+    }
+});
+
 const addTrip = ((req, res) => {
     try{
         const userId = req.params.userId;
@@ -261,5 +321,7 @@ module.exports = {
     updateUserById,
     deleteUserById,
     addTrip,
-    getTrips
+    getTrips,
+    setGoal,
+    getGoals
 }

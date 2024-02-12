@@ -76,6 +76,19 @@ npm run start
 ### `GET /users/my-trips` 
 >requires `auth = <jwt_token>` in header
 
+### `POST /goals`
+>requires `auth = <jwt_token>` in header
+```json
+{
+	"start_date": "2023-01-21",
+	"end_date": "2024-01-21",
+	"budget": 100.00
+}
+```
+
+### `GET /goals`
+>requires `auth = <jwt_token>` in header
+
 ### `POST /auth/login`
 ```json
 {
