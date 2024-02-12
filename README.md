@@ -2,11 +2,28 @@
 
 ## QuickStart
 
-- install node
+- install node 20
 
 ```bash
 npm i
 npm run start
+```
+- generate rsa keys
+
+```bash
+openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -pubout -in private_key.pem -out public_key.pem
+```
+
+- make `.env` file to your local enviroment
+
+```bash
+AZURE_POSTGRESQL_USER=<db user>
+AZURE_POSTGRESQL_HOST=<db host>
+AZURE_POSTGRESQL_DATABASE=<db name>
+AZURE_POSTGRESQL_PASSWORD=<db password>
+AZURE_POSTGRESQL_PORT=<db port>
+AZURE_POSTGRESQL_SSL=false
 ```
 
 # json sample post bodies
