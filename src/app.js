@@ -6,7 +6,7 @@ const port = process.env.PORT || 3000;
 
 const router = express.Router()
 
-var rsa = require('./util/rsaCipher.js');
+// var rsa = require('./util/rsaCipher.js');
 
 // console.log(rsa.getPublicKey())
 
