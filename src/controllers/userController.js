@@ -214,21 +214,15 @@ const getGoals = ((req, res) => {
 
 const addTrip = ((req, res) => {
     try{
-        const userId = req.params.userId;
         const tripData = req.body;
 
         const callingUser = auth.authenticateRequest(req, res);
         if(callingUser < 0) return;
 
-        if(callingUser != userId && callingUser != 1){ //TODO: sussy
-            res.status(500).send('Can only add trip for yourself');
-            return;
-        }
-
-        console.log("received request for new trip for user_id:", userId , "\nbody: ", tripData);
+        console.log("received request for new trip for user_id:", callingUser , "\nbody: ", tripData);
 
         const query = 'INSERT INTO trips (user_id, date_time, location, subtotal, total, trip_desc) VALUES ($1, $2, $3, $4, $5, $6) RETURNING trip_id';
-        const values = [userId, tripData.date_time, tripData.location, tripData.subtotal, tripData.total, tripData.trip_desc];
+        const values = [callingUser, tripData.date_time, tripData.location, tripData.subtotal, tripData.total, tripData.trip_desc];
 
         var response = {};
 

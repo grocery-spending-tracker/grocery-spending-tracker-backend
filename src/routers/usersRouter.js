@@ -10,15 +10,16 @@ router.use((req, res, next) => {
 })
 
 // separate?
-router.post("/goals", userController.setGoal)
-router.get("/goals", userController.getGoals)
+router.post("/goal", userController.setGoal)
+router.get("/goal", userController.getGoals)
 
 // separate?
-router.get("/my-trips", userController.getTrips)
-router.post("/:userId/submit-trip", userController.addTrip)
+router.get("/trip", userController.getTrips)
+router.post("/trip", userController.addTrip) // reduced
+
+router.post("/new-user", userController.setNewUser)
 
 router.get("/:userId", userController.getUserById)
-router.post("/new-user", userController.setNewUser)
 router.patch("/:userId", userController.updateUserById)
 router.delete("/:userId", userController.deleteUserById)
 
