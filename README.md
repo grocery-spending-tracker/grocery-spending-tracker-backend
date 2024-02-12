@@ -46,7 +46,7 @@ npm run start
 ### `DELETE /users/{userId}/delete-user` \*\*
 >requires `auth = <jwt_token>` in header
 
-### `POST /users/{userId}/submit-trip` \*\*
+### `POST /users/trip` \*\*
 >requires `auth = <jwt_token>` in header
 
 ```json
@@ -73,7 +73,20 @@ npm run start
 }
 ```
 
-### `GET /users/my-trips` 
+### `GET /users/trip` 
+>requires `auth = <jwt_token>` in header
+
+### `POST /goal`
+>requires `auth = <jwt_token>` in header
+```json
+{
+	"start_date": "2023-01-21",
+	"end_date": "2024-01-21",
+	"budget": 100.00
+}
+```
+
+### `GET /goal`
 >requires `auth = <jwt_token>` in header
 
 ### `POST /auth/login`
