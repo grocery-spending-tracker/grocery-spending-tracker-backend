@@ -6,16 +6,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\"",
     "start": "node --env-file=.env src/app.js",
-    "prime-azure":"su - && apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database" 
+    "prime-azure": "su - && apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
   },
   "author": "ST, AF, RY, JN",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
+    "fuse.js": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "node-rsa": "^1.1.1",
     "pg": "^8.11.3",
-    "pg-pool": "^3.6.1"
+    "pg-pool": "^3.6.1",
+    "puppeteer": "^22.0.0"
   }
 }
