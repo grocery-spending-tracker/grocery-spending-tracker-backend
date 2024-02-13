@@ -27,19 +27,23 @@ async function classifyItem(inputItem) {
     const threshold = 0.4;
 
     let classifiedItem;
+    
+    if (match[0].match && match[0].score < threshold) {
+        try {
+            classifiedItem = {
+                // store: inputItem[0].store,
+                brand: match[0].match.brand,
+                name: match[0].match.name,
+                price: match[0].match.price,
+                was_price: match[0].match.was_price,
+                product_number: match[0].match.product_number,
+                image_url: match[0].match.image_url
+            };
+        }
+        catch(e){
+            console.log("fuzzy returning null");
+        }
 
-    console.log(match[0].score) 
-
-    if (match && match[0].score < threshold) {
-        classifiedItem = {
-            // store: inputItem[0].store,
-            brand: match[0].match.brand,
-            name: match[0].match.name,
-            price: match[0].match.price,
-            was_price: match[0].match.was_price,
-            product_number: match[0].match.product_number,
-            image_url: match[0].match.image_url
-        };
 
         console.log("Fuzzy matched item with a score of ", match[0].score) 
 
