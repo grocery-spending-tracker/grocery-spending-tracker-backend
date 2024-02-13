@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\"",
     "start": "node --env-file=.env src/app.js",
-    "prime-azure": "su - && apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
+    "prime-azure": "apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client -y && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
   },
   "author": "ST, AF, RY, JN",
   "license": "ISC",

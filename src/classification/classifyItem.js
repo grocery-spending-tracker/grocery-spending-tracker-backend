@@ -22,12 +22,14 @@ function extractDecimalNumber(inputString) {
 async function classifyItem(inputItem) {
     const products = loadProducts();
 
+    inputItem[0]["price"] = String(inputItem[0]["price"]);
+
     const match = fuzzyMatching(inputItem, products);
 
     const threshold = 0.4;
 
     let classifiedItem;
-    
+
     if (match[0].match && match[0].score < threshold) {
         try {
             classifiedItem = {

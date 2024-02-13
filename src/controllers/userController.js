@@ -245,7 +245,8 @@ async function addItem(item, tripId) {
 
     // classification
     try{
-        var classifiedItem = await classifyItem([item]);
+        var itemCp = structuredClone(item);
+        var classifiedItem = await classifyItem([itemCp]);
 
         classifiedItem["item_desc"] = item["item_desc"];
         classifiedItem["item_key"] = item["item_key"];
