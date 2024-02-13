@@ -2,6 +2,8 @@ const pool = require('../db.js');
 const fs = require('fs');
 const auth = require('../util/authentication.js');
 
+const classifyItem = require('../../modules/grocery-spending-tracker-classification/src/classifyItem.js'); // fix for gods sake
+
 const setNewUser = async (req, res) => {
     try {
         const userData = req.body;
@@ -237,29 +239,14 @@ const getTrips = async (req, res) => {
     }
 };
 
-
-// function addItem(item, tripId){
-//
-//     const query = 'INSERT INTO items (trip_id, item_desc, item_key, price, taxed) VALUES ($1, $2, $3, $4, $5) RETURNING item_id';
-//     const values = [tripId, item.item_desc, item.item_key, item.price, item.taxed];
-//
-//     //// classification
-//
-//
-//     pool.query(query, values, (err, result) => {
-//         if (err) {
-//             console.error('Error executing query', err);
-//             res.status(500).send('Database Error when adding item: ' + err);
-//             return;
-//         }
-//         return result.rows[0]["item_id"];
-//     });
-//
-// }
-
 async function addItem(item, tripId) {
     const query = 'INSERT INTO items (trip_id, item_desc, item_key, price, taxed) VALUES ($1, $2, $3, $4, $5) RETURNING item_id';
     const values = [tripId, item.item_desc, item.item_key, item.price, item.taxed];
+
+    // classification
+    var classifiedItem = await classifyItem([item]);
+
+    console.log(classifiedItem);
 
     try {
         const result = await pool.query(query, values);
