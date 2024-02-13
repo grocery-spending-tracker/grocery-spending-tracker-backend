@@ -2,7 +2,7 @@ const pool = require('../db.js');
 const jwt = require('jsonwebtoken');
 const auth = require('../util/authentication.js');
 
-const getKey = ((req, res) => {
+const getKey = async (req, res) => {
     try {
         const userData = req.body;
 
@@ -11,33 +11,27 @@ const getKey = ((req, res) => {
         const query = "SELECT user_id, email FROM users WHERE email = $1 AND password = $2";
         const values = [userData.email, userData.password];
 
-        pool.query(query, values, (err, result) => {
-            if (err) {
-                console.error('Error executing query', err);
-                res.status(500).send('Database Error ' + err);
-                return;
-            }
+        const result = await pool.query(query, values); // Modified to use async/await
 
-            if (result.rows[0] == null) {
-                res.status(500).send('Incorrect credentials for user: ' + userData.email);
-                return;
-            }
+        if (result.rows.length === 0) { // Check if the user was found
+            res.status(500).send('Incorrect credentials for user: ' + userData.email);
+            return;
+        }
 
-            console.log(result.rows[0]["user_id"]);
-            user_id = result.rows[0]["user_id"];
-            email = result.rows[0]["email"];
+        console.log(result.rows[0]["user_id"]);
+        const user_id = result.rows[0]["user_id"];
+        const email = result.rows[0]["email"];
 
-            const token = auth.signToken(user_id);
+        const token = auth.signToken(user_id);
 
-            res.json({ user_id, email, token });
-        });
+        res.json({ user_id, email, token });
 
     } catch (e) {
         console.error(e);
         res.status(500).send('Server error');
     }
-})
+};
 
 module.exports = {
-  getKey
-}
+    getKey
+};
