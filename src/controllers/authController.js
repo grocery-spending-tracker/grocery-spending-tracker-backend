@@ -1,6 +1,5 @@
-const pool = require('../db.js');
-const jwt = require('jsonwebtoken');
-const auth = require('../util/authentication.js');
+import pool from '../db.js';
+import { signToken } from '../util/authentication.js';
 
 const getKey = async (req, res) => {
     try {
@@ -22,16 +21,15 @@ const getKey = async (req, res) => {
         const user_id = result.rows[0]["user_id"];
         const email = result.rows[0]["email"];
 
-        const token = auth.signToken(user_id);
+        const token = signToken(user_id);
 
         res.json({ user_id, email, token });
-
     } catch (e) {
         console.error(e);
         res.status(500).send('Server error');
     }
 };
 
-module.exports = {
+export {
     getKey
 };
