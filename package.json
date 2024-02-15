@@ -5,7 +5,7 @@
   "exports": "./src/app.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\"",
+    "test": "npx mocha ./tests/*.test.js",
     "start": "node --env-file=.env src/app.js",
     "prime-azure": "apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client -y && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
   },
@@ -20,5 +20,13 @@
     "pg": "^8.11.3",
     "pg-pool": "^3.6.1",
     "puppeteer": "^22.0.0"
+  },
+  "devDependencies": {
+    "chai": "^5.1.0",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.3.0",
+    "request": "^2.88.2",
+    "rewire": "^7.0.0",
+    "sinon": "^17.0.1"
   }
 }

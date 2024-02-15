@@ -93,7 +93,7 @@ AZURE_POSTGRESQL_SSL=false
 ### `GET /users/trip` 
 >requires `auth = <jwt_token>` in header
 
-### `POST /goal`
+### `POST /users/goal`
 >requires `auth = <jwt_token>` in header
 ```json
 {
@@ -103,7 +103,7 @@ AZURE_POSTGRESQL_SSL=false
 }
 ```
 
-### `GET /goal`
+### `GET /users/goal`
 >requires `auth = <jwt_token>` in header
 
 ### `POST /auth/login`

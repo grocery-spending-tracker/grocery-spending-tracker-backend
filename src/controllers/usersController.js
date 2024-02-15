@@ -1,5 +1,5 @@
 import pool from '../db.js';
-import {authenticateRequest} from "../util/authentication.js";
+import Auth from "../util/authentication.js";
 //import classifyItem from '../classification/classifyItem.js';
 
 const setNewUser = async (req, res) => {
@@ -23,7 +23,7 @@ const getUserById = async (req, res) => {
     try {
         const userId = req.params.userId;
 
-        const callingUser = authenticateRequest(req, res);
+        const callingUser = Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("Received request to get user with userId:", userId);

@@ -1,11 +1,11 @@
 import pool from '../db.js';
-import { signToken } from '../util/authentication.js';
+import Auth from '../util/authentication.js';
 
 const getKey = async (req, res) => {
     try {
         const userData = req.body;
 
-        console.log("received get request for token on user: " + userData.user_id);
+        console.log("received get request for token on user: " + userData.email);
 
         const query = "SELECT user_id, email FROM users WHERE email = $1 AND password = $2";
         const values = [userData.email, userData.password];
@@ -21,7 +21,7 @@ const getKey = async (req, res) => {
         const user_id = result.rows[0]["user_id"];
         const email = result.rows[0]["email"];
 
-        const token = signToken(user_id);
+        let token = await Auth.signToken(user_id);
 
         res.json({ user_id, email, token });
     } catch (e) {
