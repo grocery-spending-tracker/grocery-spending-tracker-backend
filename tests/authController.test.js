@@ -1,85 +1,76 @@
 import {expect, use} from 'chai';
 import chaiHttp from 'chai-http';
-// import sinon from 'sinon';
 import pool from '../src/db.js'; // Ensure this path matches the location of your actual db.js
 import Auth from '../src/util/authentication.js';
 import sandbox from "sinon";
-import {getKey} from "../src/controllers/authController.js"; // Ensure this path matches your actual signToken function
+import * as authController from "../src/controllers/authController.js"; // Ensure this path matches your actual signToken function
 
 use(chaiHttp);
 
 describe('Test /auth/ controller', () => {
-    let req, res, statusCode, send, json, poolStub, signTokenStub;
 
-    beforeEach(() => {
-        statusCode = 200; // Default status code for successful responses
-        send = sandbox.spy();
-        json = sandbox.spy();
-        res = { send, status: sandbox.stub().returns({ send }), json };
+    describe( 'Test login()', () => {
 
-        // Replace your actual implementations with stubs
-        poolStub = sandbox.stub(pool, 'query');
-        signTokenStub = sandbox.stub(Auth, 'signToken').resolves('mockToken');
-    });
+        let req, res, statusCode, send, json, poolStub, signTokenStub;
 
-    afterEach(() => {
-        sandbox.restore(); // Restore original functionality after each test
-    });
+        beforeEach(() => {
+            statusCode = 200; // Default status code for successful responses
+            send = sandbox.spy();
+            json = sandbox.spy();
+            res = { send, status: sandbox.stub().returns({ json, send }), json };
 
-    it('should respond with user data and a token for valid credentials', async () => {
-        const mockUserData = { email: 'test@example.com', password: 'password' };
-        const mockDbResponse = {
-            rows: [{ user_id: '123', email: 'test@example.com' }]
-        };
+            // Replace your actual implementations with stubs
+            poolStub = sandbox.stub(pool, 'query');
+            signTokenStub = sandbox.stub(Auth, 'signToken').resolves('mockToken');
+        });
 
-        // Setup stub to mimic database response
-        poolStub.resolves(mockDbResponse);
-        req = { body: mockUserData };
+        afterEach(() => {
+            sandbox.restore(); // Restore original functionality after each test
+        });
 
-        await getKey(req, res);
+        it('should respond with user data and a token for valid credentials', async () => {
+            const mockUserData = { email: 'test@example.com', password: 'password' };
+            const mockDbResponse = {
+                rows: [{ user_id: '123', email: 'test@example.com' }]
+            };
 
-        expect(poolStub.calledOnce).to.be.true;
-        expect(signTokenStub.calledWith("123")).to.be.true;
-        expect(json.calledWith(sandbox.match({ user_id: '123', email: 'test@example.com', token: 'mockToken' }))).to.be.true;
-    });
+            // Setup stub to mimic database response
+            poolStub.resolves(mockDbResponse);
+            req = { body: mockUserData };
 
-    it('should respond with 500 and an error message for invalid username', async () => {
-        const mockUserData = { email: 'wrong@example.com', password: 'password' };
-        const mockDbResponse = { rows: [] }; // No user found
+            await authController.login(req, res);
 
-        poolStub.resolves(mockDbResponse);
-        req = { body: mockUserData };
+            expect(poolStub.calledOnce).to.be.true;
+            expect(signTokenStub.calledWith("123")).to.be.true;
+            expect(json.calledWith(sandbox.match({ user_id: '123', email: 'test@example.com', token: 'mockToken' }))).to.be.true;
+        });
 
-        await getKey(req, res);
+        it('should respond with 500 and an error message for invalid credentials', async () => {
+            const mockUserData = { email: 'wrong@example.com', password: 'password' };
+            const mockDbResponse = { rows: [] }; // No user found
 
-        expect(poolStub.calledOnce).to.be.true;
-        expect(res.status.calledWith(500)).to.be.true;
-        expect(send.calledWith('Incorrect credentials for user: wrong@example.com')).to.be.true;
-    });
+            poolStub.resolves(mockDbResponse);
+            req = { body: mockUserData };
 
-    it('should respond with 500 and an error message for invalid password', async () => {
-        const mockUserData = { email: 'test@example.com', password: 'wrongpassword' };
-        const mockDbResponse = { rows: [] }; // No user found
+            await authController.login(req, res);
 
-        poolStub.resolves(mockDbResponse);
-        req = { body: mockUserData };
+            expect(poolStub.calledOnce).to.be.true;
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(send.calledWith('Incorrect credentials for user: wrong@example.com')).to.be.true;
+        });
 
-        await getKey(req, res);
+        it('should handle server errors gracefully', async () => {
+            const error = new Error('Mock error for test');
 
-        expect(poolStub.calledOnce).to.be.true;
-        expect(res.status.calledWith(500)).to.be.true;
-        expect(send.calledWith('Incorrect credentials for user: test@example.com')).to.be.true;
-    });
+            poolStub.rejects(error); // Simulate an error during database query
+            req = { body: { email: 'test@example.com', password: 'password' } };
 
-    it('should handle server errors gracefully', async () => {
-        const error = new Error('Mock error for test');
-        poolStub.rejects(error); // Simulate an error during database query
-        req = { body: { email: 'test@example.com', password: 'password' } };
+            await authController.login(req, res);
 
-        await getKey(req, res);
+            expect(poolStub.calledOnce).to.be.true;
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(send.calledWith('Server error')).to.be.true;
+        });
 
-        expect(poolStub.calledOnce).to.be.true;
-        expect(res.status.calledWith(500)).to.be.true;
-        expect(send.calledWith('Server error')).to.be.true;
     });
 });

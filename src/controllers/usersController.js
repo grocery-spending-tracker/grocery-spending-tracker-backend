@@ -2,7 +2,7 @@ import pool from '../db.js';
 import Auth from "../util/authentication.js";
 //import classifyItem from '../classification/classifyItem.js';
 
-const setNewUser = async (req, res) => {
+const createNewUser = async (req, res) => {
     try {
         const userData = req.body;
         console.log("received request for new user ", userData.email, "\nbody: ", userData);
@@ -239,7 +239,7 @@ async function addItem(item, tripId) {
 }
 
 export {
-    setNewUser,
+    createNewUser,
     getUserById,
     updateUserById,
     deleteUserById,

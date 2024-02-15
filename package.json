@@ -6,11 +6,15 @@
   "type": "module",
   "scripts": {
     "test": "npx mocha ./tests/*.test.js",
+    "coverage": "npx c8 npm test",
     "start": "node --env-file=.env src/app.js",
     "prime-azure": "apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client -y && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
   },
   "author": "ST, AF, RY, JN",
   "license": "ISC",
+  "mocha": {
+    "require": "mocha-suppress-logs"
+  },
   "dependencies": {
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
@@ -22,9 +26,11 @@
     "puppeteer": "^22.0.0"
   },
   "devDependencies": {
+    "c8": "^9.1.0",
     "chai": "^5.1.0",
     "chai-http": "^4.4.0",
     "mocha": "^10.3.0",
+    "mocha-suppress-logs": "^0.5.1",
     "request": "^2.88.2",
     "rewire": "^7.0.0",
     "sinon": "^17.0.1"

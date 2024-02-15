@@ -9,6 +9,6 @@ router.use((req, res, next) => {
     next();
 })
 
-router.post("/login", authController.getKey);
+router.post("/login", authController.login);
 
 export default router;

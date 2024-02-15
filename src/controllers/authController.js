@@ -1,7 +1,7 @@
 import pool from '../db.js';
 import Auth from '../util/authentication.js';
 
-const getKey = async (req, res) => {
+const login = async (req, res) => {
     try {
         const userData = req.body;
 
@@ -23,7 +23,7 @@ const getKey = async (req, res) => {
 
         let token = await Auth.signToken(user_id);
 
-        res.json({ user_id, email, token });
+        res.status(200).json({ user_id, email, token });
     } catch (e) {
         console.error(e);
         res.status(500).send('Server error');
@@ -31,5 +31,5 @@ const getKey = async (req, res) => {
 };
 
 export {
-    getKey
+    login
 };

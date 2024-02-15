@@ -17,7 +17,7 @@ router.get("/goal", usersController.getGoals);
 router.get("/trip", usersController.getTrips);
 router.post("/trip", usersController.addTrip);
 
-router.post("/new-user", usersController.setNewUser);
+router.post("/new-user", usersController.createNewUser);
 
 router.get("/:userId", usersController.getUserById);
 router.patch("/:userId", usersController.updateUserById);
