@@ -1,4 +1,4 @@
-const express = require('express')
+import express from 'express';
 const router = express.Router()
 
 router.use((req, res, next) => {
@@ -9,4 +9,4 @@ router.use((req, res, next) => {
 
 // router.post("/login", authController.getKey)
 
-module.exports = router
+export default router;
