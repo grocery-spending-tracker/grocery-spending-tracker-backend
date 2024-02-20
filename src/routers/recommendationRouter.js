@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router()
 
 router.use((req, res, next) => {
-    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nRecieved for /recommendation/')
+    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nReceived for /recommendation/')
     console.log('Time: ', Date.now())
     next()
 })

@@ -4,11 +4,11 @@ import * as authController from '../controllers/authController.js';
 const router = express.Router()
 
 router.use((req, res, next) => {
-    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nRecieved for /auth/');
+    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nReceived for /auth/');
     console.log('Time: ', Date.now());
     next();
 })
 
-router.post("/login", authController.getKey);
+router.post("/login", authController.login);
 
 export default router;

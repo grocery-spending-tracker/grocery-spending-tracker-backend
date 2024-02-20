@@ -26,6 +26,13 @@ AZURE_POSTGRESQL_PORT=<db port>
 AZURE_POSTGRESQL_SSL=false
 ```
 
+# Test and Coverage
+
+```bash
+npm test # run unit tests
+npm run coverage # run tests with coverage report
+```
+
 # json sample post bodies
 
 ### `POST /users/new-user`
@@ -93,7 +100,7 @@ AZURE_POSTGRESQL_SSL=false
 ### `GET /users/trip` 
 >requires `auth = <jwt_token>` in header
 
-### `POST /goal`
+### `POST /users/goal`
 >requires `auth = <jwt_token>` in header
 ```json
 {
@@ -103,7 +110,7 @@ AZURE_POSTGRESQL_SSL=false
 }
 ```
 
-### `GET /goal`
+### `GET /users/goal`
 >requires `auth = <jwt_token>` in header
 
 ### `POST /auth/login`

@@ -12,13 +12,13 @@ const signOptions = {
     algorithm: 'RS256' // Use RSASSA-PKCS1-v1_5
 };
 
-const signToken = ((userId) => {
+let signToken = ((userId) => {
     const token = jwt.sign({ username: userId }, JWT_PRIVATE, signOptions); // Expires in 1 hour
     console.log('Signed token:', token);
     return token;
 });
 
-const authenticateRequest = ((req, res) => {
+let authenticateRequest = ((req, res) => {
     const authToken = req.headers['auth'];
 
     if (!authToken) {
@@ -49,4 +49,4 @@ function validateToken(token){
     }
 }
 
-export { authenticateRequest, signToken };
+export default {signToken,authenticateRequest};
