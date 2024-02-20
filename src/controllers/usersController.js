@@ -19,11 +19,11 @@ const createNewUser = async (req, res) => {
     }
 };
 
-const getUserById = async (req, res) => {
+const getUser = async (req, res) => {
     try {
         const userId = req.params.userId;
 
-        const callingUser = Auth.authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("Received request to get user with userId:", userId);
@@ -40,20 +40,19 @@ const getUserById = async (req, res) => {
         }
 
         console.log('Query result:', result.rows[0]);
-        res.status(200).send(result.rows[0]);
+        res.status(200).json(result.rows[0]);
     } catch (error) {
         console.error('Error executing query', error);
         res.status(500).send('Database Error ' + error);
     }
 };
 
-
-const updateUserById = async (req, res) => {
+const updateUser = async (req, res) => {
     try {
         const userId = req.params.userId;
         const userData = req.body;
 
-        const callingUser = authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("received request to update user with userId: ", userId);
@@ -81,7 +80,7 @@ const deleteUserById = async (req, res) => {
     try {
         const userId = req.params.userId;
 
-        const callingUser = authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("received request to delete user with userId: ", userId);
@@ -109,7 +108,7 @@ const setGoal = async (req, res) => {
     try {
         const goalData = req.body;
 
-        const callingUser = authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("received request to set goal for user_id:", callingUser, "\nbody: ", goalData);
@@ -128,7 +127,7 @@ const setGoal = async (req, res) => {
 
 const getGoals = async (req, res) => {
     try {
-        const callingUser = authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("received request to get goals for user_id:", callingUser);
@@ -150,7 +149,7 @@ const addTrip = async (req, res) => {
     try {
         const tripData = req.body;
 
-        const callingUser = authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("Received request for new trip for user_id:", callingUser, "\nbody: ", tripData);
@@ -175,7 +174,7 @@ const addTrip = async (req, res) => {
 };
 const getTrips = async (req, res) => {
     try {
-        const callingUser = authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("received request for get trip for user_id:", callingUser);
@@ -240,8 +239,8 @@ async function addItem(item, tripId) {
 
 export {
     createNewUser,
-    getUserById,
-    updateUserById,
+    getUser,
+    updateUser,
     deleteUserById,
     addTrip,
     getTrips,

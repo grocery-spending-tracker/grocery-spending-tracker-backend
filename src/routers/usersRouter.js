@@ -19,8 +19,8 @@ router.post("/trip", usersController.addTrip);
 
 router.post("/new-user", usersController.createNewUser);
 
-router.get("/:userId", usersController.getUserById);
-router.patch("/:userId", usersController.updateUserById);
+router.get("/:userId", usersController.getUser);
+router.patch("/:userId", usersController.updateUser);
 router.delete("/:userId", usersController.deleteUserById);
 
 export default router;

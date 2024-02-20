@@ -5,6 +5,7 @@ import Auth from '../src/util/authentication.js';
 import sandbox from "sinon";
 import * as usersController from "../src/controllers/usersController.js";
 import * as authController from "../src/controllers/authController.js";
+import {getUser} from "../src/controllers/usersController.js";
 
 use(chaiHttp);
 
@@ -45,12 +46,11 @@ describe('Test /users/ controller', () => {
             await usersController.createNewUser(req, res);
 
             expect(poolStub.calledOnce).to.be.true;
-            // expect(authenticateRequestStub.calledWith("123")).to.be.true;
             expect(json.calledWith(sandbox.match({ users: 123 }))).to.be.true;
         });
 
         it('should handle server errors gracefully', async () => {
-            const error = new Error('Mock error for test');
+            const error = new Error('Mock');
             const mockUserData = {
                 first_name:"Jim",
                 last_name:"Chung",
@@ -61,11 +61,102 @@ describe('Test /users/ controller', () => {
             poolStub.rejects(error); // Simulate an error during database query
             req = { body: mockUserData };
 
-            await authController.login(req, res);
+            await usersController.createNewUser(req, res);
 
             expect(poolStub.calledOnce).to.be.true;
             expect(res.status.calledWith(500)).to.be.true;
-            expect(send.calledWith('Server error')).to.be.true;
+            expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
         });
     });
+
+    describe( 'Test getUser()', () => {
+
+        it('should respond with userData for valid user_id', async () => {
+            const mockUserData = {
+                params:{ userId:123 },
+                headers:{ auth:"mockToken" }
+            };
+            const mockUserDataResponse = {
+                first_name:"Jim",
+                last_name:"Chung",
+                email:"test@example.com",
+                password:"password"
+            };
+            const mockDbResponse = {
+                rows: [mockUserDataResponse]
+            };
+
+            poolStub.resolves(mockDbResponse);
+            req = mockUserData;
+
+            await usersController.getUser(req, res);
+
+            expect(poolStub.calledOnce).to.be.true;
+            expect(authenticateRequestStub.calledWith(req, res)).to.be.true;
+            expect(json.calledWith(sandbox.match(mockUserDataResponse))).to.be.true;
+        });
+
+        it('should handle server errors gracefully', async () => {
+            const error = new Error('Mock error for test');
+            const mockUserData = {
+                params:{ userId:123 },
+                headers:{ auth:"mockToken" }
+            };
+
+            poolStub.rejects(error); // Simulate an error during database query
+            req = mockUserData;
+
+            await usersController.getUser(req, res);
+
+            expect(poolStub.calledOnce).to.be.true;
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
+        });
+    });
+
+    describe( 'Test updateUser()', () => {
+
+        it('should respond with userData for valid updated userData', async () => {
+            req = {
+                params:{ userId:123 },
+                headers:{ auth:"mockToken" },
+                body:{}
+            };
+            const mockUserDataResponse = {
+                first_name:"Jim",
+                last_name:"Chung",
+                email:"test@example.com",
+                password:"password"
+            };
+            const mockDbResponse = {
+                rows: [mockUserDataResponse]
+            };
+
+            poolStub.resolves(mockDbResponse);
+
+            await usersController.getUser(req, res);
+
+            expect(poolStub.calledOnce).to.be.true;
+            expect(authenticateRequestStub.calledWith(req, res)).to.be.true;
+            expect(json.calledWith(sandbox.match(mockUserDataResponse))).to.be.true;
+        });
+
+        it('should handle server errors gracefully', async () => {
+            const error = new Error('Mock error for test');
+            const mockUserData = {
+                params:{ userId:123 },
+                headers:{ auth:"mockToken" }
+            };
+
+            poolStub.rejects(error); // Simulate an error during database query
+            req = mockUserData;
+
+            await usersController.update(req, res);
+
+            expect(poolStub.calledOnce).to.be.true;
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
+        });
+    });
+
 });
