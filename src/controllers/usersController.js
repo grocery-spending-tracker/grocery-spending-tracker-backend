@@ -21,21 +21,19 @@ const createNewUser = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const userId = req.params.userId;
-
         const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
-        console.log("Received request to get user with userId:", userId);
+        console.log("Received request to get user with userId:", callingUser);
 
         const query = 'SELECT * FROM users WHERE user_id = $1';
-        const values = [userId];
+        const values = [callingUser];
 
         // Await the query result
         const result = await pool.query(query, values);
 
         if (result.rows.length === 0) {
-            res.status(404).send('No user found with userId: ' + userId); // Using 404 Not Found for no result
+            res.status(404).send('No user found with userId: ' + callingUser); // Using 404 Not Found for no result
             return;
         }
 
@@ -49,13 +47,12 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const userId = req.params.userId;
         const userData = req.body;
 
         const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
-        console.log("received request to update user with userId: ", userId);
+        console.log("received request to update user with userId: ", callingUser);
 
         if("home_base" in userData){
             userData["home_base_lon"] = userData.home_base["longitude"];
@@ -65,7 +62,7 @@ const updateUser = async (req, res) => {
 
         const setClauses = Object.keys(userData).map((key, index) => `${key} = $${index + 2}`).join(', ');
         const query = `UPDATE users SET ${setClauses} WHERE user_id = $1 RETURNING *`;
-        const values = [userId, ...Object.values(userData)];
+        const values = [callingUser, ...Object.values(userData)];
 
         const result = await pool.query(query, values);
         console.log('Query result:', result.rows[0]);
@@ -78,20 +75,18 @@ const updateUser = async (req, res) => {
 
 const deleteUserById = async (req, res) => {
     try {
-        const userId = req.params.userId;
-
         const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
-        console.log("received request to delete user with userId: ", userId);
+        console.log("received request to delete user with userId: ", callingUser);
 
         const query = 'DELETE FROM users WHERE user_id = $1 RETURNING *';
-        const values = [userId];
+        const values = [callingUser];
 
         const result = await pool.query(query, values);
 
         if (result.rows.length === 0) {
-            res.status(500).send('No user found with userId: ' + userId);
+            res.status(500).send('No user found with userId: ' + callingUser);
             return;
         }
 

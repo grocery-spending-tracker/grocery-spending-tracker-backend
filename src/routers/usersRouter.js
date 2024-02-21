@@ -17,10 +17,9 @@ router.get("/goal", usersController.getGoals);
 router.get("/trip", usersController.getTrips);
 router.post("/trip", usersController.addTrip);
 
-router.post("/new-user", usersController.createNewUser);
-
-router.get("/:userId", usersController.getUser);
-router.patch("/:userId", usersController.updateUser);
-router.delete("/:userId", usersController.deleteUserById);
+router.post("/", usersController.createNewUser);
+router.get("/", usersController.getUser);
+router.patch("/", usersController.updateUser);
+router.delete("/", usersController.deleteUserById);
 
 export default router;

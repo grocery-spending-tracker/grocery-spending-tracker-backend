@@ -35,7 +35,7 @@ npm run coverage # run tests with coverage report
 
 # json sample post bodies
 
-### `POST /users/new-user`
+### `POST /users`
 
 ```json
 {
@@ -47,10 +47,10 @@ npm run coverage # run tests with coverage report
 ```
 > note: encrypt password extra layer
 
-### `GET /users/{userId}` \*\*
+### `GET /users` \*\*
 >requires `auth = <jwt_token>` in header
 
-### `PATCH /users/{userId}` \*\*
+### `PATCH /users` \*\*
 >requires `auth = <jwt_token>` in header
 
 ```json
@@ -67,7 +67,7 @@ npm run coverage # run tests with coverage report
 }
 ```
 
-### `DELETE /users/{userId}/delete-user` \*\*
+### `DELETE /users` \*\*
 >requires `auth = <jwt_token>` in header
 
 ### `POST /users/trip` \*\*
@@ -122,7 +122,7 @@ npm run coverage # run tests with coverage report
 ```
 - Will return a token.
 
-To get token, call `POST grocery-tracker.azurewebsites.net/auth/login` with body:
+To get token, call `POST /auth/login` with body:
 ```json
 {
     "user_id":6,
