@@ -1,14 +1,14 @@
-const express = require('express')
+import express from 'express';
+import * as authController from '../controllers/authController.js';
+
 const router = express.Router()
 
-const authController = require('../controllers/authController.js')
-
 router.use((req, res, next) => {
-    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nRecieved for /auth/')
-    console.log('Time: ', Date.now())
-    next()
+    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nReceived for /auth/');
+    console.log('Time: ', Date.now());
+    next();
 })
 
-router.post("/login", authController.getKey)
+router.post("/login", authController.login);
 
-module.exports = router
+export default router;

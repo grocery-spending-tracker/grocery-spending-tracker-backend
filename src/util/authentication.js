@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const fs = require('fs');
+import jwt from 'jsonwebtoken';
+import fs from 'fs';
 
 // const JWT_PUBLIC = process.env.JWT_PUBLIC.replace(/\\n/g, '\n') || fs.readFileSync('public_key.pem', 'utf8');
 // const JWT_PRIVATE = process.env.JWT_PRIVATE.replace(/\\n/g, '\n') || fs.readFileSync('private_key.pem', 'utf8');
@@ -12,13 +12,13 @@ const signOptions = {
     algorithm: 'RS256' // Use RSASSA-PKCS1-v1_5
 };
 
-const signToken = ((userId) => {
+let signToken = ((userId) => {
     const token = jwt.sign({ username: userId }, JWT_PRIVATE, signOptions); // Expires in 1 hour
     console.log('Signed token:', token);
     return token;
 });
 
-const authenticateRequest = ((req, res) => {
+let authenticateRequest = ((req, res) => {
     const authToken = req.headers['auth'];
 
     if (!authToken) {
@@ -49,7 +49,4 @@ function validateToken(token){
     }
 }
 
-module.exports = {
-    authenticateRequest,
-    signToken
-}
+export default {signToken,authenticateRequest};

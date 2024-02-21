@@ -1,10 +1,8 @@
-const pool = require('../db.js');
-const fs = require('fs');
-const auth = require('../util/authentication.js');
+import pool from '../db.js';
+import Auth from "../util/authentication.js";
+//import classifyItem from '../classification/classifyItem.js';
 
-const classifyItem = require('../classification/classifyItem.js'); // fix for gods sake
-
-const setNewUser = async (req, res) => {
+const createNewUser = async (req, res) => {
     try {
         const userData = req.body;
         console.log("received request for new user ", userData.email, "\nbody: ", userData);
@@ -21,44 +19,40 @@ const setNewUser = async (req, res) => {
     }
 };
 
-const getUserById = async (req, res) => {
+const getUser = async (req, res) => {
     try {
-        const userId = req.params.userId;
-
-        const callingUser = auth.authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
-        console.log("Received request to get user with userId:", userId);
+        console.log("Received request to get user with userId:", callingUser);
 
         const query = 'SELECT * FROM users WHERE user_id = $1';
-        const values = [userId];
+        const values = [callingUser];
 
         // Await the query result
         const result = await pool.query(query, values);
 
         if (result.rows.length === 0) {
-            res.status(404).send('No user found with userId: ' + userId); // Using 404 Not Found for no result
+            res.status(404).send('No user found with userId: ' + callingUser); // Using 404 Not Found for no result
             return;
         }
 
         console.log('Query result:', result.rows[0]);
-        res.status(200).send(result.rows[0]);
+        res.status(200).json(result.rows[0]);
     } catch (error) {
         console.error('Error executing query', error);
         res.status(500).send('Database Error ' + error);
     }
 };
 
-
-const updateUserById = async (req, res) => {
+const updateUser = async (req, res) => {
     try {
-        const userId = req.params.userId;
         const userData = req.body;
 
-        const callingUser = auth.authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
-        console.log("received request to update user with userId: ", userId);
+        console.log("received request to update user with userId: ", callingUser);
 
         if("home_base" in userData){
             userData["home_base_lon"] = userData.home_base["longitude"];
@@ -68,7 +62,7 @@ const updateUserById = async (req, res) => {
 
         const setClauses = Object.keys(userData).map((key, index) => `${key} = $${index + 2}`).join(', ');
         const query = `UPDATE users SET ${setClauses} WHERE user_id = $1 RETURNING *`;
-        const values = [userId, ...Object.values(userData)];
+        const values = [callingUser, ...Object.values(userData)];
 
         const result = await pool.query(query, values);
         console.log('Query result:', result.rows[0]);
@@ -81,20 +75,18 @@ const updateUserById = async (req, res) => {
 
 const deleteUserById = async (req, res) => {
     try {
-        const userId = req.params.userId;
-
-        const callingUser = auth.authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
-        console.log("received request to delete user with userId: ", userId);
+        console.log("received request to delete user with userId: ", callingUser);
 
         const query = 'DELETE FROM users WHERE user_id = $1 RETURNING *';
-        const values = [userId];
+        const values = [callingUser];
 
         const result = await pool.query(query, values);
 
         if (result.rows.length === 0) {
-            res.status(500).send('No user found with userId: ' + userId);
+            res.status(500).send('No user found with userId: ' + callingUser);
             return;
         }
 
@@ -111,7 +103,7 @@ const setGoal = async (req, res) => {
     try {
         const goalData = req.body;
 
-        const callingUser = auth.authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("received request to set goal for user_id:", callingUser, "\nbody: ", goalData);
@@ -130,7 +122,7 @@ const setGoal = async (req, res) => {
 
 const getGoals = async (req, res) => {
     try {
-        const callingUser = auth.authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("received request to get goals for user_id:", callingUser);
@@ -148,48 +140,38 @@ const getGoals = async (req, res) => {
     }
 };
 
+const deleteGoal = async (req, res) => {
+    try {
+        const goal_id = req.params["goal_id"];
 
-// const addTrip = ((req, res) => {
-//     try{
-//         const tripData = req.body;
-//
-//         const callingUser = auth.authenticateRequest(req, res);
-//         if(callingUser < 0) return;
-//
-//         console.log("received request for new trip for user_id:", callingUser , "\nbody: ", tripData);
-//
-//         const query = 'INSERT INTO trips (user_id, date_time, location, subtotal, total, trip_desc) VALUES ($1, $2, $3, $4, $5, $6) RETURNING trip_id';
-//         const values = [callingUser, tripData.date_time, tripData.location, tripData.subtotal, tripData.total, tripData.trip_desc];
-//
-//         var response = {};
-//
-//         pool.query(query, values, (err, result) => {
-//             if (err) {
-//                 console.error('Error executing query', err);
-//                 res.status(500).send('Database Error when adding trip: ' + err);
-//                 return;
-//             }
-//             response["trip_id"] = result.rows[0]["trip_id"];
-//
-//             tripData.items.forEach((item) => {
-//                 var id = addItem(item, response["trip_id"]);
-//             });
-//
-//             console.log('Query result:', response);
-//             res.status(200).json(response);
-//         });
-//
-//     }catch (e){
-//         console.error(e);
-//         res.status(500).send('Server error');
-//     }
-// });
+        const callingUser = await Auth.authenticateRequest(req, res);
+        if (callingUser < 0) return;
+
+        console.log("received request to delete goal for user_id: " + callingUser + " and goal_id: " + goal_id);
+
+        const query = 'DELETE FROM goals WHERE user_id = $1 AND goal_id = $2 RETURNING goal_id;';
+        const values = [callingUser, goal_id];
+
+        const result = await pool.query(query, values);
+
+        if(result.rows.length === 0){
+            res.status(500).send('no goal under user_id: ' + callingUser + " and goal_id: " + goal_id);
+            return;
+        }
+
+        console.log('Query result:', result.rows[0]);
+        res.status(200).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).send('Database Error ' + err);
+    }
+};
 
 const addTrip = async (req, res) => {
     try {
         const tripData = req.body;
 
-        const callingUser = auth.authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("Received request for new trip for user_id:", callingUser, "\nbody: ", tripData);
@@ -212,9 +194,10 @@ const addTrip = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
 const getTrips = async (req, res) => {
     try {
-        const callingUser = auth.authenticateRequest(req, res);
+        const callingUser = await Auth.authenticateRequest(req, res);
         if (callingUser < 0) return;
 
         console.log("received request for get trip for user_id:", callingUser);
@@ -244,29 +227,29 @@ async function addItem(item, tripId) {
     const item_values = [tripId, item.item_desc, item.item_key, item.price, item.taxed];
 
     // classification
-    try{
-        var itemCp = structuredClone(item);
-        var classifiedItem = await classifyItem([itemCp]);
-
-        classifiedItem["item_desc"] = item["item_desc"];
-        classifiedItem["item_key"] = item["item_key"];
-        classifiedItem["taxed"] = item["taxed"];
-        classifiedItem["trip_id"] = tripId;
-
-        const class_query = 'INSERT INTO classifiedItems (trip_id, item_key, item_desc, price, listed_price, item_brand, item_name, item_product_number, image_url, taxed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING classified_item_id';
-        const class_values = [tripId, classifiedItem.item_key, classifiedItem.item_desc,  classifiedItem.price, classifiedItem.list_price, classifiedItem.brand, classifiedItem.name, classifiedItem.product_number, classifiedItem.image_url, classifiedItem.taxed];
-
-        try {
-            const result = await pool.query(class_query, class_values);
-            console.log("sent to table with classified_item_id: " + result.rows[0]["classified_item_id"]);
-            // return result.rows[0]["classified_item_id"];
-        } catch (err) {
-            console.error('Error executing query', err);
-            throw new Error('Database Error when adding classified_item: ' + err);
-        }
-    }catch(e){
-        console.log("Error classifying item: " + e);
-    }
+    // try{
+    //     var itemCp = structuredClone(item);
+    //     var classifiedItem = await classifyItem([itemCp]);
+    //
+    //     classifiedItem["item_desc"] = item["item_desc"];
+    //     classifiedItem["item_key"] = item["item_key"];
+    //     classifiedItem["taxed"] = item["taxed"];
+    //     classifiedItem["trip_id"] = tripId;
+    //
+    //     const class_query = 'INSERT INTO classifiedItems (trip_id, item_key, item_desc, price, listed_price, item_brand, item_name, item_product_number, image_url, taxed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING classified_item_id';
+    //     const class_values = [tripId, classifiedItem.item_key, classifiedItem.item_desc,  classifiedItem.price, classifiedItem.list_price, classifiedItem.brand, classifiedItem.name, classifiedItem.product_number, classifiedItem.image_url, classifiedItem.taxed];
+    //
+    //     try {
+    //         const result = await pool.query(class_query, class_values);
+    //         console.log("sent to table with classified_item_id: " + result.rows[0]["classified_item_id"]);
+    //         // return result.rows[0]["classified_item_id"];
+    //     } catch (err) {
+    //         console.error('Error executing query', err);
+    //         throw new Error('Database Error when adding classified_item: ' + err);
+    //     }
+    // }catch(e){
+    //     console.log("Error classifying item: " + e);
+    // }
 
     try {
         const result = await pool.query(item_query, item_values);
@@ -277,13 +260,14 @@ async function addItem(item, tripId) {
     }
 }
 
-module.exports = {
-    setNewUser,
-    getUserById,
-    updateUserById,
+export {
+    createNewUser,
+    getUser,
+    updateUser,
     deleteUserById,
     addTrip,
     getTrips,
     setGoal,
-    getGoals
-}
+    getGoals,
+    deleteGoal
+};

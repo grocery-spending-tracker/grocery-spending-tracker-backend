@@ -26,9 +26,16 @@ AZURE_POSTGRESQL_PORT=<db port>
 AZURE_POSTGRESQL_SSL=false
 ```
 
+# Test and Coverage
+
+```bash
+npm test # run unit tests
+npm run coverage # run tests with coverage report
+```
+
 # json sample post bodies
 
-### `POST /users/new-user`
+### `POST /users`
 
 ```json
 {
@@ -40,10 +47,10 @@ AZURE_POSTGRESQL_SSL=false
 ```
 > note: encrypt password extra layer
 
-### `GET /users/{userId}` \*\*
+### `GET /users` \*\*
 >requires `auth = <jwt_token>` in header
 
-### `PATCH /users/{userId}` \*\*
+### `PATCH /users` \*\*
 >requires `auth = <jwt_token>` in header
 
 ```json
@@ -60,7 +67,7 @@ AZURE_POSTGRESQL_SSL=false
 }
 ```
 
-### `DELETE /users/{userId}/delete-user` \*\*
+### `DELETE /users` \*\*
 >requires `auth = <jwt_token>` in header
 
 ### `POST /users/trip` \*\*
@@ -93,7 +100,7 @@ AZURE_POSTGRESQL_SSL=false
 ### `GET /users/trip` 
 >requires `auth = <jwt_token>` in header
 
-### `POST /goal`
+### `POST /users/goal`
 >requires `auth = <jwt_token>` in header
 ```json
 {
@@ -103,7 +110,10 @@ AZURE_POSTGRESQL_SSL=false
 }
 ```
 
-### `GET /goal`
+### `GET /users/goal`
+>requires `auth = <jwt_token>` in header
+
+### `DELETE /users/goal/:goal_id`
 >requires `auth = <jwt_token>` in header
 
 ### `POST /auth/login`
@@ -115,7 +125,7 @@ AZURE_POSTGRESQL_SSL=false
 ```
 - Will return a token.
 
-To get token, call `POST grocery-tracker.azurewebsites.net/auth/login` with body:
+To get token, call `POST /auth/login` with body:
 ```json
 {
     "user_id":6,
