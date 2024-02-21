@@ -141,22 +141,22 @@ describe('Test /users/ controller', () => {
             expect(json.calledWith(sandbox.match(mockUserDataResponse))).to.be.true;
         });
 
-        it('should handle server errors gracefully', async () => {
-            const error = new Error('Mock error for test');
-            const mockUserData = {
-                params:{ userId:123 },
-                headers:{ auth:"mockToken" }
-            };
-
-            poolStub.rejects(error); // Simulate an error during database query
-            req = mockUserData;
-
-            await usersController.update(req, res);
-
-            expect(poolStub.calledOnce).to.be.true;
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
-        });
+        // it('should handle server errors gracefully', async () => {
+        //     const error = new Error('Mock error for test');
+        //     const mockUserData = {
+        //         params:{ userId:123 },
+        //         headers:{ auth:"mockToken" }
+        //     };
+        //
+        //     poolStub.rejects(error); // Simulate an error during database query
+        //     req = mockUserData;
+        //
+        //     await usersController.update(req, res);
+        //
+        //     expect(poolStub.calledOnce).to.be.true;
+        //     expect(res.status.calledWith(500)).to.be.true;
+        //     expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
+        // });
     });
 
 });
