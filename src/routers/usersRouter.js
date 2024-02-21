@@ -12,6 +12,7 @@ router.use((req, res, next) => {
 // todo: separate?
 router.post("/goal", usersController.setGoal);
 router.get("/goal", usersController.getGoals);
+router.delete("/goal/:goal_id", usersController.deleteGoal)
 
 // todo: separate?
 router.get("/trip", usersController.getTrips);

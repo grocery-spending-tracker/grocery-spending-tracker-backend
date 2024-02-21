@@ -140,6 +140,33 @@ const getGoals = async (req, res) => {
     }
 };
 
+const deleteGoal = async (req, res) => {
+    try {
+        const goal_id = req.params["goal_id"];
+
+        const callingUser = await Auth.authenticateRequest(req, res);
+        if (callingUser < 0) return;
+
+        console.log("received request to delete goal for user_id: " + callingUser + " and goal_id: " + goal_id);
+
+        const query = 'DELETE FROM goals WHERE user_id = $1 AND goal_id = $2 RETURNING goal_id;';
+        const values = [callingUser, goal_id];
+
+        const result = await pool.query(query, values);
+
+        if(result.rows.length === 0){
+            res.status(500).send('no goal under user_id: ' + callingUser + " and goal_id: " + goal_id);
+            return;
+        }
+
+        console.log('Query result:', result.rows[0]);
+        res.status(200).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).send('Database Error ' + err);
+    }
+};
+
 const addTrip = async (req, res) => {
     try {
         const tripData = req.body;
@@ -167,6 +194,7 @@ const addTrip = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
 const getTrips = async (req, res) => {
     try {
         const callingUser = await Auth.authenticateRequest(req, res);
@@ -240,5 +268,6 @@ export {
     addTrip,
     getTrips,
     setGoal,
-    getGoals
+    getGoals,
+    deleteGoal
 };
