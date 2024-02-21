@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+<<<<<<< Updated upstream
     "test": "echo \"Error: no test specified\"",
+=======
+    "test": "npx mocha --env-file=.env ./tests/*.test.js",
+    "coverage": "npx c8 npm test",
+>>>>>>> Stashed changes
     "start": "node --env-file=.env src/app.js",
     "prime-azure": "apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client -y && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
   },
