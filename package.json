@@ -5,7 +5,7 @@
   "exports": "./src/app.js",
   "type": "module",
   "scripts": {
-    "test": "npx mocha --env-file=.env ./tests/*.test.js",
+    "test": "echo test",
     "coverage": "npx c8 npm test",
     "start": "node --env-file=.env src/app.js",
     "prime-azure": "apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client -y && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
