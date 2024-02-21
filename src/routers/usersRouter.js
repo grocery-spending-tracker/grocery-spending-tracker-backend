@@ -1,28 +1,26 @@
-const express = require('express')
+import express from 'express';
+import * as usersController from '../controllers/usersController.js';
+
 const router = express.Router()
 
-const userController = require('../controllers/userController.js')
-
 router.use((req, res, next) => {
-    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nRecieved for /users/')
-    console.log('Time: ', Date.now())
-    next()
+    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nReceived for /users/');
+    console.log('Time: ', Date.now());
+    next();
 })
 
-// separate?
-router.post("/goal", userController.setGoal)
-router.get("/goal", userController.getGoals)
+// todo: separate?
+router.post("/goal", usersController.setGoal);
+router.get("/goal", usersController.getGoals);
+router.delete("/goal/:goal_id", usersController.deleteGoal)
 
-// separate?
-router.get("/trip", userController.getTrips)
-router.post("/trip", userController.addTrip) // reduced
+// todo: separate?
+router.get("/trip", usersController.getTrips);
+router.post("/trip", usersController.addTrip);
 
-router.post("/new-user", userController.setNewUser)
+router.post("/", usersController.createNewUser);
+router.get("/", usersController.getUser);
+router.patch("/", usersController.updateUser);
+router.delete("/", usersController.deleteUserById);
 
-router.get("/:userId", userController.getUserById)
-router.patch("/:userId", userController.updateUserById)
-router.delete("/:userId", userController.deleteUserById)
-
-// router.get("/userIdByEmail", userController.getUserIdByEmail)
-
-module.exports = router
+export default router;

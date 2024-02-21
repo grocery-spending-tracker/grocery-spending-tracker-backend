@@ -15,3 +15,5 @@ PostgreSQL:
 
 
 https://www.sqlshack.com/setting-up-a-postgresql-database-on-mac/
+
+"require": "mocha-suppress-logs"
