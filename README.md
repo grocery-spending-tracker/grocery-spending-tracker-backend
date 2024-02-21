@@ -113,6 +113,9 @@ npm run coverage # run tests with coverage report
 ### `GET /users/goal`
 >requires `auth = <jwt_token>` in header
 
+### `DELETE /users/goal/:goal_id`
+>requires `auth = <jwt_token>` in header
+
 ### `POST /auth/login`
 ```json
 {
