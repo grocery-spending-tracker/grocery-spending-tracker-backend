@@ -3,6 +3,8 @@ import chaiHttp from 'chai-http';
 import pool from '../src/db.js'; // Ensure this path matches the location of your actual db.js
 import Auth from '../src/util/authentication.js';
 import sandbox from "sinon";
+import fs from 'fs';
+
 import * as authController from "../src/controllers/authController.js"; // Ensure this path matches your actual signToken function
 
 use(chaiHttp);

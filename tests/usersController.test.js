@@ -4,13 +4,12 @@ import pool from '../src/db.js'; // Ensure this path matches the location of you
 import Auth from '../src/util/authentication.js';
 import sandbox from "sinon";
 import * as usersController from "../src/controllers/usersController.js";
-import * as authController from "../src/controllers/authController.js";
-import {getUser} from "../src/controllers/usersController.js";
+import fs from "fs";
 
 use(chaiHttp);
 
 describe('Test /users/ controller', () => {
-    let req, res, statusCode, send, json, poolStub, authenticateRequestStub;
+    let req, res, statusCode, send, json, poolStub, authenticateRequestStub, fsStub;
 
     beforeEach(() => {
         statusCode = 200; // Default status code for successful responses
@@ -21,6 +20,8 @@ describe('Test /users/ controller', () => {
         // Replace your actual implementations with stubs
         poolStub = sandbox.stub(pool, 'query');
         authenticateRequestStub = sandbox.stub(Auth, 'authenticateRequest').resolves(123);
+
+        fsStub = sandbox.stub(fs, 'readFileSync').returns('mockfile');
     });
 
     afterEach(() => {
