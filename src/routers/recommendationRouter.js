@@ -1,4 +1,6 @@
 import express from 'express';
+import * as recommendationController from '../controllers/recommendationController.js';
+
 const router = express.Router()
 
 router.use((req, res, next) => {
@@ -7,6 +9,6 @@ router.use((req, res, next) => {
     next()
 })
 
-// router.post("/login", authController.getKey)
+router.get("/", recommendationController.getRecommendations)
 
 export default router;
