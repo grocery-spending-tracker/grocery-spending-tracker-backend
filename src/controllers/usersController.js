@@ -108,8 +108,16 @@ const setGoal = async (req, res) => {
 
         console.log("received request to set goal for user_id:", callingUser, "\nbody: ", goalData);
 
-        const query = 'INSERT INTO goals (user_id, start_date, end_date, budget) VALUES ($1, $2, $3, $4) RETURNING goal_id';
-        const values = [callingUser, goalData.start_date, goalData.end_date, goalData.budget];
+        const query = 'INSERT INTO goals (user_id, start_date, end_date, budget, goal_name, goal_desc, periodic) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING goal_id';
+        const values = [
+            callingUser,
+            goalData["start_date"],
+            goalData["end_date"],
+            goalData["budget"],
+            goalData["goal_name"],
+            goalData["goal_desc"],
+            goalData["periodic"]
+        ];
 
         const result = await pool.query(query, values);
         console.log('Query result:', result.rows[0]);
