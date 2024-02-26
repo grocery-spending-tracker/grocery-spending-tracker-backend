@@ -22,8 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "node-rsa": "^1.1.1",
     "pg": "^8.11.3",
-    "pg-pool": "^3.6.1",
-    "puppeteer": "^22.0.0"
+    "pg-pool": "^3.6.1"
   },
   "devDependencies": {
     "c8": "^9.1.0",
