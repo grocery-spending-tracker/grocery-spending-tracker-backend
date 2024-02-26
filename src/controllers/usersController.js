@@ -237,7 +237,7 @@ async function addItem(item, tripId) {
 
     try{
         var itemCp = structuredClone(item);
-        var classifiedItem = await processItem([itemCp]);
+        var classifiedItem = (await processItem([itemCp]))[0];
 
         console.log("HERE");
         console.log(classifiedItem);
