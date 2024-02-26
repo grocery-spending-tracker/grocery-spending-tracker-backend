@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo test",
     "coverage": "npx c8 npm test",
-    "start": "node --env-file=.env src/app.js && ./azure-scripts/install-puppeteer-deps.sh",
+    "start": "./azure-scripts/install-puppeteer-deps.sh && node --env-file=.env src/app.js",
     "prime-azure": "apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client -y && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
   },
   "author": "ST, AF, RY, JN",
