@@ -27,4 +27,4 @@ rm -rf /var/lib/apt/lists/*
 
 # Install puppeteer so it's available in the node_modules folder
 # Adjust puppeteer version as needed
-npm install puppeteer
+#npm install puppeteer
