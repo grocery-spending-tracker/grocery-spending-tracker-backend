@@ -1,6 +1,7 @@
 *.pem
 .idea
 .DS_Store
+errorLog.txt
 
 # Logs
 logs
@@ -45,6 +46,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+**/node_modules/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
