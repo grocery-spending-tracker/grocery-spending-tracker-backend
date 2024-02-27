@@ -1,6 +1,7 @@
 import pool from '../db.js';
 import Auth from "../util/authentication.js";
 //import classifyItem from '../classification/classifyItem.js';
+import { processItem } from "../grocery-spending-tracker-classification/src/main.js";
 
 const createNewUser = async (req, res) => {
     try {
@@ -108,8 +109,16 @@ const setGoal = async (req, res) => {
 
         console.log("received request to set goal for user_id:", callingUser, "\nbody: ", goalData);
 
-        const query = 'INSERT INTO goals (user_id, start_date, end_date, budget) VALUES ($1, $2, $3, $4) RETURNING goal_id';
-        const values = [callingUser, goalData.start_date, goalData.end_date, goalData.budget];
+        const query = 'INSERT INTO goals (user_id, start_date, end_date, budget, goal_name, goal_desc, periodic) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING goal_id';
+        const values = [
+            callingUser,
+            goalData["start_date"],
+            goalData["end_date"],
+            goalData["budget"],
+            goalData["goal_name"],
+            goalData["goal_desc"],
+            goalData["periodic"]
+        ];
 
         const result = await pool.query(query, values);
         console.log('Query result:', result.rows[0]);
@@ -226,30 +235,32 @@ async function addItem(item, tripId) {
     const item_query = 'INSERT INTO items (trip_id, item_desc, item_key, price, taxed) VALUES ($1, $2, $3, $4, $5) RETURNING item_id';
     const item_values = [tripId, item.item_desc, item.item_key, item.price, item.taxed];
 
-    // classification
-    // try{
-    //     var itemCp = structuredClone(item);
-    //     var classifiedItem = await classifyItem([itemCp]);
-    //
-    //     classifiedItem["item_desc"] = item["item_desc"];
-    //     classifiedItem["item_key"] = item["item_key"];
-    //     classifiedItem["taxed"] = item["taxed"];
-    //     classifiedItem["trip_id"] = tripId;
-    //
-    //     const class_query = 'INSERT INTO classifiedItems (trip_id, item_key, item_desc, price, listed_price, item_brand, item_name, item_product_number, image_url, taxed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING classified_item_id';
-    //     const class_values = [tripId, classifiedItem.item_key, classifiedItem.item_desc,  classifiedItem.price, classifiedItem.list_price, classifiedItem.brand, classifiedItem.name, classifiedItem.product_number, classifiedItem.image_url, classifiedItem.taxed];
-    //
-    //     try {
-    //         const result = await pool.query(class_query, class_values);
-    //         console.log("sent to table with classified_item_id: " + result.rows[0]["classified_item_id"]);
-    //         // return result.rows[0]["classified_item_id"];
-    //     } catch (err) {
-    //         console.error('Error executing query', err);
-    //         throw new Error('Database Error when adding classified_item: ' + err);
-    //     }
-    // }catch(e){
-    //     console.log("Error classifying item: " + e);
-    // }
+    try{
+        var itemCp = structuredClone(item);
+        var classifiedItem = (await processItem([itemCp]))[0];
+
+        console.log("HERE");
+        console.log(classifiedItem);
+
+        classifiedItem["item_desc"] = item["item_desc"];
+        classifiedItem["item_key"] = item["item_key"];
+        classifiedItem["taxed"] = item["taxed"];
+        classifiedItem["trip_id"] = tripId;
+
+        const class_query = 'INSERT INTO classifiedItems (trip_id, item_key, item_desc, price, listed_price, item_brand, item_name, item_product_number, image_url, taxed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING classified_item_id';
+        const class_values = [tripId, classifiedItem.item_key, classifiedItem.item_desc,  classifiedItem.price, classifiedItem.list_price, classifiedItem.brand, classifiedItem.name, classifiedItem.product_number, classifiedItem.image_url, classifiedItem.taxed];
+
+        try {
+            const result = await pool.query(class_query, class_values);
+            console.log("sent to table with classified_item_id: " + result.rows[0]["classified_item_id"]);
+            // return result.rows[0]["classified_item_id"];
+        } catch (err) {
+            console.error('Error executing query', err);
+            throw new Error('Database Error when adding classified_item: ' + err);
+        }
+    }catch(e){
+        console.log("Error classifying item: " + e);
+    }
 
     try {
         const result = await pool.query(item_query, item_values);

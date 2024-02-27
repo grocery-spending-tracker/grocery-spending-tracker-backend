@@ -1,0 +1,15 @@
+2024-02-26T02:28:34.841Z - Error fetching product details for SKU 06038318916: Error: An `executablePath` or `channel` must be specified for `puppeteer-core`
+2024-02-26T02:28:34.894Z - Error fetching product details for SKU 08390000636: Error: An `executablePath` or `channel` must be specified for `puppeteer-core`
+2024-02-26T02:28:34.993Z - Error fetching product details for SKU 2003040: Error: An `executablePath` or `channel` must be specified for `puppeteer-core`
+2024-02-26T02:35:38.296Z - Error fetching product details for SKU 06038318916: Error: An `executablePath` or `channel` must be specified for `puppeteer-core`
+2024-02-26T02:35:38.343Z - Error fetching product details for SKU 08390000636: Error: An `executablePath` or `channel` must be specified for `puppeteer-core`
+2024-02-26T02:35:38.446Z - Error fetching product details for SKU 2003040: Error: An `executablePath` or `channel` must be specified for `puppeteer-core`
+2024-02-26T02:41:02.464Z - Error fetching product details for SKU 06038318916: Error: An `executablePath` or `channel` must be specified for `puppeteer-core`
+2024-02-26T02:41:02.524Z - Error fetching product details for SKU 08390000636: Error: An `executablePath` or `channel` must be specified for `puppeteer-core`
+2024-02-26T02:41:02.640Z - Error fetching product details for SKU 2003040: Error: An `executablePath` or `channel` must be specified for `puppeteer-core`
+2024-02-26T02:43:43.491Z - Error fetching product details for SKU 06038318916: Error: Could not find expected browser (chrome) locally. Run `npm install` to download the correct Chromium revision (982053).
+2024-02-26T02:43:43.542Z - Error fetching product details for SKU 08390000636: Error: Could not find expected browser (chrome) locally. Run `npm install` to download the correct Chromium revision (982053).
+2024-02-26T02:43:43.655Z - Error fetching product details for SKU 2003040: Error: Could not find expected browser (chrome) locally. Run `npm install` to download the correct Chromium revision (982053).
+2024-02-26T02:46:07.500Z - Error fetching product details for SKU 06038318916: Error: Could not find expected browser (chrome) locally. Run `npm install` to download the correct Chromium revision (982053).
+2024-02-26T02:46:07.550Z - Error fetching product details for SKU 08390000636: Error: Could not find expected browser (chrome) locally. Run `npm install` to download the correct Chromium revision (982053).
+2024-02-26T02:46:07.675Z - Error fetching product details for SKU 2003040: Error: Could not find expected browser (chrome) locally. Run `npm install` to download the correct Chromium revision (982053).
