@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo test",
     "coverage": "npx c8 npm test",
-    "start": "node --env-file=.env src/app.js",
+    "start": "printenv JWT_PUBLIC && node --env-file=.env src/app.js",
     "clean": "rm -rf node_modules src/grocery-spending-tracker-classification/node_modules",
     "prime-azure": "apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client -y && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
   },
