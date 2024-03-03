@@ -10,15 +10,12 @@ async function getFrequentlyPurchasedItems(userId) {
     try {
         const client = await pool.connect();
         const query = `
-            SELECT item_key, item_desc, count(*) AS frequency
-            FROM classifiedItems
-            WHERE trip_id IN (
-            SELECT trip_id
-            FROM trips
-            WHERE user_id = $1
-            )
-            GROUP BY item_key, item_desc
-            ORDER BY frequency DESC
+            SELECT ci.item_key, ci.item_name, ci.price, ci.image_url, t.location, t.date_time, count(*) AS frequency, MIN(ci.price) OVER (PARTITION BY ci.item_key) AS lowest_price
+            FROM classifiedItems ci
+            JOIN trips t ON ci.trip_id = t.trip_id
+            WHERE t.user_id = $1
+            GROUP BY ci.item_key, ci.item_name, ci.price, ci.image_url, t.location, t.date_time
+            ORDER BY frequency DESC, lowest_price ASC
             LIMIT 10;
         `;
         const result = await client.query(query, [userId]);
@@ -43,10 +40,11 @@ async function getPopularItems() {
     try {
         const client = await pool.connect();
         const query = `
-            SELECT item_key, item_desc, count(*) AS frequency
+            SELECT item_key, item_name, price, image_url, location, date_time, count(*) AS frequency
             FROM classifiedItems
-            GROUP BY item_key, item_desc
-            ORDER BY frequency DESC
+            JOIN trips ON classifiedItems.trip_id = trips.trip_id
+            GROUP BY item_key, item_name, price, image_url, location, date_time
+            ORDER BY frequency DESC, price ASC
             LIMIT 10;
         `;
         const result = await client.query(query);
@@ -66,7 +64,8 @@ async function getPopularItems() {
 async function recommendItems(userId) {
     const frequentlyPurchased = await getFrequentlyPurchasedItems(userId);
     if (!frequentlyPurchased.length) {
-        return await getPopularItems();
+        const frequentlyPurchasedFromAllUsers = await getPopularItems();
+        return frequentlyPurchasedFromAllUsers.slice(0, 3);
     }
 
     return frequentlyPurchased.slice(0, 3);
