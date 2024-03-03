@@ -44,11 +44,12 @@ async function getLowestPriceFrequentlyPurchasedItems(userId) {
             SELECT ci.item_key, ci.item_name, ci.price, ci.image_url, t.location, t.date_time, count(*) AS frequency, MIN(ci.price) OVER (PARTITION BY ci.item_key) AS lowest_price
             FROM classifiedItems ci
             JOIN trips t ON ci.trip_id = t.trip_id
-            WHERE t.user_id = $1 AND (ci.price - lowest_price) >= 0
+            WHERE t.user_id = $1 AND (ci.price - MIN(ci.price) OVER (PARTITION BY ci.item_key)) > 0
             GROUP BY ci.item_key, ci.item_name, ci.price, ci.image_url, t.location, t.date_time
             ORDER BY frequency DESC, lowest_price ASC
             LIMIT 10;
         `;
+
         const result = await client.query(query, [userId]);
         client.release();
     
