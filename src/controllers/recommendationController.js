@@ -49,7 +49,7 @@ async function getLowestPriceFrequentlyPurchasedItems(userId) {
             SELECT DISTINCT ci.item_key, ci.item_name, ci.price, ci.image_url, t.location, t.date_time, lp.lowest_price, count(*) AS frequency
             FROM (
                 SELECT ci.*, ROW_NUMBER() OVER (PARTITION BY ci.item_key ORDER BY ci.price DESC) AS row_num
-                FROM classifiedItems ci
+                FROM classifiedItems ci  -- Added "ci" to FROM clause
                 JOIN trips t ON ci.trip_id = t.trip_id
                 WHERE t.user_id = $1
             ) AS filtered_items
@@ -57,7 +57,8 @@ async function getLowestPriceFrequentlyPurchasedItems(userId) {
             WHERE filtered_items.row_num = 1
             ORDER BY frequency DESC, lp.lowest_price ASC
             LIMIT 10;
-        `;
+            
+            `;
 
         const result = await client.query(query, [userId]);
         client.release();
