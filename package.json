@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo test",
     "coverage": "npx c8 npm test",
-    "start": "node --env-file=.env src/app.js",
+    "start": "./azure-scripts/install-puppeteer-deps.sh && node --env-file=.env src/app.js",
+    "clean": "rm -rf node_modules src/grocery-spending-tracker-classification/node_modules",
     "prime-azure": "apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client -y && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
   },
   "author": "ST, AF, RY, JN",
@@ -18,12 +19,11 @@
   "dependencies": {
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
-    "fuse.js": "^7.0.0",
+    "grocery-spending-tracker-classification": "file:src/grocery-spending-tracker-classification",
     "jsonwebtoken": "^9.0.2",
     "node-rsa": "^1.1.1",
     "pg": "^8.11.3",
-    "pg-pool": "^3.6.1",
-    "puppeteer": "^22.0.0"
+    "pg-pool": "^3.6.1"
   },
   "devDependencies": {
     "c8": "^9.1.0",
@@ -31,7 +31,6 @@
     "chai-http": "^4.4.0",
     "mocha": "^10.3.0",
     "mocha-suppress-logs": "^0.5.1",
-    "request": "^2.88.2",
     "rewire": "^7.0.0",
     "sinon": "^17.0.1"
   }
