@@ -23,8 +23,6 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          git submodule update --init --recursive
-          git submodule update --remote --merge
           npm install
           npm run build --if-present
           npm run test --if-present

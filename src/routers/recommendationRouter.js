@@ -1,12 +1,15 @@
 import express from 'express';
-const router = express.Router()
+import * as recommendationController from '../controllers/recommendationController.js';
+
+const router = express.Router();
 
 router.use((req, res, next) => {
-    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nReceived for /recommendation/')
-    console.log('Time: ', Date.now())
-    next()
+    console.log('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nReceived for /recommendation/');
+    console.log('Time: ', Date.now());
+    next();
 })
 
-// router.post("/login", authController.getKey)
+router.get("/", recommendationController.getRecommendations);
+router.get("/lowest", recommendationController.getRecommendationsLowestAvailable);
 
 export default router;
