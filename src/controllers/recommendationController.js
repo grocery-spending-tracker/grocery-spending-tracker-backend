@@ -80,10 +80,10 @@ const getRecommendations = async (req, res) => {
         console.log("received request for get recommendation from ", callingUser);
 
         // call singleRecommendation
-        const recommendations = recommendItems(callingUser); //userid
+        const recommendations = await recommendItems(callingUser); //userid
 
-        console.log("not implemented yet :(");
-        res.status(200).json({"message":"not implemented yet :("});
+        // console.log("not implemented yet :(");
+        // res.status(200).json({"message":"not implemented yet :("});
 
         // let recommendation = {};
         
