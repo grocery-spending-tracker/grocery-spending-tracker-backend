@@ -46,9 +46,9 @@ async function getLowestPriceFrequentlyPurchasedItems(userId) {
             JOIN trips t ON ci.trip_id = t.trip_id
             WHERE t.user_id = $1 
                 AND ci.price > (
-                    SELECT MIN(cis.price)
-                    FROM classifiedItems cis
-                    WHERE ci.item_key = cis.item_key
+                    SELECT MIN(price)
+                    FROM classifiedItems
+                    WHERE ci.item_key = classifiedItems.item_key
                 )
             GROUP BY ci.item_key, ci.item_name, ci.price, ci.image_url, t.location, t.date_time
             ORDER BY frequency DESC, lowest_price ASC
