@@ -46,19 +46,20 @@ async function getLowestPriceFrequentlyPurchasedItems(userId) {
                 FROM classifiedItems
                 GROUP BY item_key
             )
-            SELECT DISTINCT ci.item_key, ci.item_name, ci.price, ci.image_url, t.location, t.date_time, lp.lowest_price, count(*) AS frequency
+            SELECT DISTINCT fi.item_key, fi.item_name, fi.price, fi.image_url, t.location, t.date_time, lp.lowest_price, count(*) AS frequency
             FROM (
-                SELECT ci.*, ROW_NUMBER() OVER (PARTITION BY ci.item_key ORDER BY ci.price DESC) AS row_num
-                FROM classifiedItems ci  -- Added "ci" to FROM clause
-                JOIN trips t ON ci.trip_id = t.trip_id
+                SELECT classifiedItems.*, ROW_NUMBER() OVER (PARTITION BY classifiedItems.item_key ORDER BY classifiedItems.price DESC) AS row_num
+                FROM classifiedItems
+                JOIN trips t ON classifiedItems.trip_id = t.trip_id
                 WHERE t.user_id = $1
-            ) AS filtered_items
-            JOIN lowest_prices lp ON filtered_items.item_key = lp.item_key
-            WHERE filtered_items.row_num = 1
+            ) AS fi
+            JOIN lowest_prices lp ON fi.item_key = lp.item_key
+            JOIN trips t ON fi.trip_id = t.trip_id
+            WHERE fi.row_num = 1
+            GROUP BY fi.item_key, fi.item_name, fi.price, fi.image_url, t.location, t.date_time, lp.lowest_price  -- Added "t.location, t.date_time"
             ORDER BY frequency DESC, lp.lowest_price ASC
             LIMIT 10;
-            
-            `;
+        `;
 
         const result = await client.query(query, [userId]);
         client.release();
