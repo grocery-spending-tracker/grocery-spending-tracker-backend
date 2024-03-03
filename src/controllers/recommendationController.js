@@ -14,8 +14,8 @@ async function getFrequentlyPurchasedItems(userId) {
                 (SELECT item_name FROM classifiedItems WHERE item_key = ci.item_key) AS item_name,
                 (SELECT price FROM classifiedItems WHERE item_key = ci.item_key) AS price,
                 (SELECT image_url FROM classifiedItems WHERE item_key = ci.item_key) AS image_url,
-                t.location,
-                t.date_time,
+                (SELECT location FROM trips WHERE trip_id = ci.trip_id) AS location,
+                (SELECT date_time FROM trips WHERE trip_id = ci.trip_id) AS date_time,
                 count(*) AS frequency
             FROM classifiedItems ci
             JOIN trips t ON ci.trip_id = t.trip_id
