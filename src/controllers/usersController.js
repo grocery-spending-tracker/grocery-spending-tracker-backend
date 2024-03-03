@@ -3,6 +3,7 @@ import Auth from "../util/authentication.js";
 //import classifyItem from '../classification/classifyItem.js';
 import { processItem } from "../grocery-spending-tracker-classification/src/main.js";
 
+//todo: add better error returning
 const createNewUser = async (req, res) => {
     try {
         const userData = req.body;
