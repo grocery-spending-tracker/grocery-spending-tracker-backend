@@ -10,5 +10,6 @@ router.use((req, res, next) => {
 })
 
 router.get("/", recommendationController.getRecommendations)
+router.get("/lowest", recommendationController.getRecommendationsLowestAvailable)
 
 export default router;
