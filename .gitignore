@@ -3,6 +3,7 @@
 .DS_Store
 errorLog.txt
 
+
 # Logs
 logs
 *.log
