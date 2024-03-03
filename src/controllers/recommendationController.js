@@ -10,18 +10,19 @@ async function getFrequentlyPurchasedItems(userId) {
     try {
         const client = await pool.connect();
         const query = `
-            SELECT ci.item_key,
-                (SELECT item_name FROM classifiedItems WHERE item_key = ci.item_key) AS item_name,
-                (SELECT price FROM classifiedItems WHERE item_key = ci.item_key) AS price,
-                (SELECT image_url FROM classifiedItems WHERE item_key = ci.item_key) AS image_url,
-                (SELECT location FROM trips WHERE trip_id = ci.trip_id) AS location,
-                (SELECT date_time FROM trips WHERE trip_id = ci.trip_id) AS date_time,
-                count(*) AS frequency
+            SELECT 
+                ci.item_key,
+                MIN(ci.item_name) AS item_name, -- Assuming item_name doesn't vary for the same item_key, or it's acceptable to select any.
+                MIN(ci.price) AS price, -- Selects the minimum price for each unique item_key.
+                MIN(ci.image_url) AS image_url, -- Assuming one image_url per item_key, or it's acceptable to select any.
+                MIN(t.location) AS location, -- Arbitrarily selects a location; adjust as needed.
+                MAX(t.date_time) AS date_time, -- Selects the latest date_time for each item_key.
+                COUNT(*) AS frequency
             FROM classifiedItems ci
             JOIN trips t ON ci.trip_id = t.trip_id
             WHERE t.user_id = $1
             GROUP BY ci.item_key
-            ORDER BY frequency DESC, ci.price ASC
+            ORDER BY frequency DESC, MIN(ci.price) ASC
             LIMIT 10;
         `;
         const result = await client.query(query, [userId]);
