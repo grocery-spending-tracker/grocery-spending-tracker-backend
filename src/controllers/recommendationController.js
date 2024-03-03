@@ -40,11 +40,11 @@ async function getPopularItems() {
     try {
         const client = await pool.connect();
         const query = `
-            SELECT item_key, item_name, price, image_url, location, date_time, count(*) AS frequency
-            FROM classifiedItems
-            JOIN trips ON classifiedItems.trip_id = trips.trip_id
-            GROUP BY item_key, item_name, price, image_url, location, date_time
-            ORDER BY frequency DESC, price ASC
+            SELECT ci.item_key, ci.item_name, ci.image_url, t.location, t.date_time, count(*) AS frequency, MIN(ci.price) OVER (PARTITION BY ci.item_key) AS lowest_price
+            FROM classifiedItems ci
+            JOIN trips t ON ci.trip_id = t.trip_id
+            GROUP BY ci.item_key, ci.item_name, ci.price, ci.image_url, t.location, t.date_time
+            ORDER BY frequency DESC, lowest_price ASC
             LIMIT 10;
         `;
         const result = await client.query(query);
