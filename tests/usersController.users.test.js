@@ -15,18 +15,17 @@ describe('FRT-M6: Test usersController users module  (with mocked db calls)', ()
     let req, res, statusCode, send, json, poolStub, authenticateRequestStub;
 
     beforeEach(() => {
-        statusCode = 200; // Default status code for successful responses
+        statusCode = 200;
         send = sandbox.spy();
         json = sandbox.spy();
         res = { send, status: sandbox.stub().returns({ json, send }), json };
 
-        // Replace your actual implementations with stubs
         poolStub = sandbox.stub(pool, 'query');
         authenticateRequestStub = sandbox.stub(Auth, 'authenticateRequest').resolves(123);
     });
 
     afterEach(() => {
-        sandbox.restore(); // Restore original functionality after each test
+        sandbox.restore();
     });
 
     /**
