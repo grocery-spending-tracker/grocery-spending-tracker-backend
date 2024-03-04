@@ -1,10 +1,10 @@
 import {expect, use} from 'chai';
 import chaiHttp from 'chai-http';
-import pool from '../src/db.js'; // Ensure this path matches the location of your actual db.js
-import Auth from '../src/util/authentication.js';
+import pool from '../../src/db.js';
+import Auth from '../../src/util/authentication.js';
 import sandbox from "sinon";
 
-import * as authController from "../src/controllers/authController.js"; // Ensure this path matches your actual signToken function
+import * as authController from "../../src/controllers/authController.js";
 
 use(chaiHttp);
 
@@ -21,18 +21,17 @@ describe('FRT-M7: Test authController Authentication module', () => {
         let req, res, statusCode, send, json, poolStub, signTokenStub;
 
         beforeEach(() => {
-            statusCode = 200; // Default status code for successful responses
+            statusCode = 200;
             send = sandbox.spy();
             json = sandbox.spy();
             res = { send, status: sandbox.stub().returns({ json, send }), json };
 
-            // Replace your actual implementations with stubs
             poolStub = sandbox.stub(pool, 'query');
             signTokenStub = sandbox.stub(Auth, 'signToken').resolves('mockToken');
         });
 
         afterEach(() => {
-            sandbox.restore(); // Restore original functionality after each test
+            sandbox.restore();
         });
 
         /**
@@ -48,7 +47,6 @@ describe('FRT-M7: Test authController Authentication module', () => {
                 rows: [{ user_id: '123', email: 'test@example.com' }]
             };
 
-            // Setup stub to mimic database response
             poolStub.resolves(mockDbResponse);
             req = { body: mockUserData };
 
@@ -90,7 +88,7 @@ describe('FRT-M7: Test authController Authentication module', () => {
         it('FRT-M7-1c: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
 
-            poolStub.rejects(error); // Simulate an error during database query
+            poolStub.rejects(error);
             req = { body: { email: 'test@example.com', password: 'password' } };
 
             await authController.login(req, res);

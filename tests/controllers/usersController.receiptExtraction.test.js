@@ -1,12 +1,11 @@
 import {expect, use} from 'chai';
 import chaiHttp from 'chai-http';
-import pool from '../src/db.js'; // Ensure this path matches the location of your actual db.js
-import Auth from '../src/util/authentication.js';
-import Classification from "../src/grocery-spending-tracker-classification/src/main.js";
+import pool from '../../src/db.js';
+import Auth from '../../src/util/authentication.js';
+import Classification from "grocery-spending-tracker-classification/src/main.js";
 
 import sandbox from "sinon";
-import * as usersController from "../src/controllers/usersController.js";
-import {updateUser} from "../src/controllers/usersController.js";
+import * as usersController from "../../src/controllers/usersController.js";
 
 use(chaiHttp);
 
@@ -41,9 +40,9 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
     });
 
     /**
-     * Tests for FRT-M3-1
+     * Tests for FRT-M3-25
      */
-    describe( 'FRT-M3-1: Test addTrip()', () => {
+    describe( 'FRT-M3-25: Test addTrip()', () => {
 
         /**
          * FRT-M3-1a
@@ -52,7 +51,7 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
          * Output: the trip_id for the created trip; items are processed into classified items
          * Derivation: user should be able to set a trip and add it and all its items to the db
          */
-        it('FRT-M3-1a: should respond with a the trip_id for the created trip', async () => {
+        it('FRT-M3-25a: should respond with a the trip_id for the created trip', async () => {
             req = {
                 params:{ userId:123 },
                 headers:{ auth:"mockToken" },
@@ -114,16 +113,14 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
             expect(json.calledWith(sandbox.match(mockUserDataResponseTrip))).to.be.true;
         });
 
-
-
         /**
-         * FRT-M3-1b
+         * FRT-M3-25b
          * Initial State: N/A
          * Input: N/A
          * Output: 500 Database Error
          * Derivation: N/A
          */
-        it('FRT-M5-1b: should handle server errors gracefully', async () => {
+        it('FRT-M3-25b: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
             const mockUserData = {
                 params:{ userId:123 },
@@ -142,20 +139,19 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
         });
     });
 
-
     /**
-     * Tests for FRT-M3-2
+     * Tests for FRT-M3-26
      */
-    describe( 'FRT-M3-2: Test getTrips()', () => {
+    describe( 'FRT-M3-26: Test getTrips()', () => {
 
         /**
-         * FRT-M3-2a
+         * FRT-M3-26a
          * Initial State: trips mapped to user
          * Input: JWT token in header
          * Output: a list of all the users trips
          * Derivation: user should be able to get all of their previous trips
          */
-        it('FRT-M3-2a: should respond with a list of the trips mapped to a user', async () => {
+        it('FRT-M3-26a: should respond with a list of the trips mapped to a user', async () => {
             req = {
                 params:{ userId:123 },
                 headers:{ auth:"mockToken" },
@@ -281,13 +277,13 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
         });
 
         /**
-         * FRT-M3-2b
+         * FRT-M3-26b
          * Initial State: N/A
          * Input: N/A
          * Output: 500 Database Error
          * Derivation: N/A
          */
-        it('FRT-M3-2b: should handle server errors gracefully', async () => {
+        it('FRT-M3-26b: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
             const mockUserData = {
                 params:{ userId:123 },
@@ -305,73 +301,4 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
             expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
         });
     });
-    //
-    // /**
-    //  * Tests for FRT-M5-3
-    //  */
-    // describe( 'FRT-M5-3: Test deleteGoal()', () => {
-    //
-    //     /**
-    //      * FRT-M5-3a
-    //      * Initial State: goals are mapped to user
-    //      * Input: a goal_id to be deleted in the request params
-    //      * Output: the body of the goal that was deleted
-    //      * Derivation: user should be able to delete a goal of theirs
-    //      */
-    //     it('FRT-M5-1a: should respond with a the goal_id for the created goal', async () => {
-    //         req = {
-    //             params:{ userId:123, goal_id:1 },
-    //             headers:{ auth:"mockToken" },
-    //             body:{}
-    //         };
-    //         const mockUserDataResponse = {
-    //             goal_id: 11,
-    //             user_id: 11,
-    //             start_date: "2023-01-21T05:00:00.000Z",
-    //             end_date: "2024-01-21T05:00:00.000Z",
-    //             budget: "1099.00",
-    //             category: null,
-    //             goal_name: "testgoal",
-    //             goal_desc: "deleted goal :(",
-    //             periodic: true
-    //         };
-    //         const mockDbResponse = {
-    //             rows: [mockUserDataResponse]
-    //         };
-    //
-    //         poolStub.resolves(mockDbResponse);
-    //
-    //         await usersController.deleteGoal(req, res);
-    //
-    //         expect(poolStub.calledOnce).to.be.true;
-    //         expect(authenticateRequestStub.calledWith(req, res)).to.be.true;
-    //         expect(json.calledWith(sandbox.match(mockUserDataResponse))).to.be.true;
-    //     });
-    //
-    //     /**
-    //      * FRT-M5-1b
-    //      * Initial State: N/A
-    //      * Input: N/A
-    //      * Output: 500 Database Error
-    //      * Derivation: N/A
-    //      */
-    //     it('FRT-M5-1b: should handle server errors gracefully', async () => {
-    //         const error = new Error('Mock error for test');
-    //         const mockUserData = {
-    //             params:{ userId:123 },
-    //             headers:{ auth:"mockToken" },
-    //             body:{}
-    //         };
-    //
-    //         poolStub.rejects(error); // Simulate an error during database query
-    //         req = mockUserData;
-    //
-    //         await usersController.setGoal(req, res);
-    //
-    //         expect(poolStub.calledOnce).to.be.true;
-    //         expect(res.status.calledWith(500)).to.be.true;
-    //         expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
-    //     });
-    // });
-
 });
