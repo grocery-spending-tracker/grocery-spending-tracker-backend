@@ -1,7 +1,7 @@
 import pool from '../db.js';
 import Auth from "../util/authentication.js";
 //import classifyItem from '../classification/classifyItem.js';
-import { processItem } from "../grocery-spending-tracker-classification/src/main.js";
+import Classification from "../grocery-spending-tracker-classification/src/main.js";
 
 //todo: add better error returning
 const createNewUser = async (req, res) => {
@@ -238,7 +238,7 @@ async function addItem(item, tripId) {
 
     try{
         var itemCp = structuredClone(item);
-        var classifiedItem = (await processItem([itemCp]))[0];
+        var classifiedItem = (await Classification.processItem([itemCp]))[0];
 
         console.log("HERE");
         console.log(classifiedItem);

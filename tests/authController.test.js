@@ -8,9 +8,15 @@ import * as authController from "../src/controllers/authController.js"; // Ensur
 
 use(chaiHttp);
 
-describe('Test /auth/ controller', () => {
+/**
+ * Tests for FRT-M7
+ */
+describe('FRT-M7: Test authController Authentication module', () => {
 
-    describe( 'Test login()', () => {
+    /**
+     * Tests for FRT-M7-1
+     */
+    describe( 'FRT-M7-1: Test login()', () => {
 
         let req, res, statusCode, send, json, poolStub, signTokenStub;
 
@@ -29,7 +35,14 @@ describe('Test /auth/ controller', () => {
             sandbox.restore(); // Restore original functionality after each test
         });
 
-        it('should respond with user data and a token for valid credentials', async () => {
+        /**
+         * FRT-M7-1a
+         * Initial State: calling user exists in db
+         * Input: valid user email and password
+         * Output: json object with user_id and JWT token
+         * Derivation: user should be able to receive a JWT token when logging in with their credentials
+         */
+        it('FRT-M7-1a: should respond with user data and a token for valid credentials', async () => {
             const mockUserData = { email: 'test@example.com', password: 'password' };
             const mockDbResponse = {
                 rows: [{ user_id: '123', email: 'test@example.com' }]
@@ -46,7 +59,14 @@ describe('Test /auth/ controller', () => {
             expect(json.calledWith(sandbox.match({ user_id: '123', email: 'test@example.com', token: 'mockToken' }))).to.be.true;
         });
 
-        it('should respond with 500 and an error message for invalid credentials', async () => {
+        /**
+         * FRT-M7-1b
+         * Initial State: calling user exists in db
+         * Input: invalid user email and password
+         * Output: 500 Incorrect credentials
+         * Derivation: user should not receive a JWT token when logging in with the wrong credentials
+         */
+        it('FRT-M7-1b: should respond with 500 and an error message for invalid credentials', async () => {
             const mockUserData = { email: 'wrong@example.com', password: 'password' };
             const mockDbResponse = { rows: [] }; // No user found
 
@@ -60,7 +80,14 @@ describe('Test /auth/ controller', () => {
             expect(send.calledWith('Incorrect credentials for user: wrong@example.com')).to.be.true;
         });
 
-        it('should handle server errors gracefully', async () => {
+        /**
+         * FRT-M7-1c
+         * Initial State: N/A
+         * Input: N/A
+         * Output: 500 Database Error
+         * Derivation: N/A
+         */
+        it('FRT-M7-1c: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
 
             poolStub.rejects(error); // Simulate an error during database query

@@ -4,14 +4,13 @@ import pool from '../src/db.js'; // Ensure this path matches the location of you
 import Auth from '../src/util/authentication.js';
 import sandbox from "sinon";
 import * as usersController from "../src/controllers/usersController.js";
-import {updateUser} from "../src/controllers/usersController.js";
 
 use(chaiHttp);
 
 /**
  * Tests for FRT-M6
  */
-describe('FRT-M6: Test usersController users module  (with mocked db calls)', () => {
+describe('FRT-M6: Test usersController users module (with mocked db calls)', () => {
     let req, res, statusCode, send, json, poolStub, authenticateRequestStub;
 
     beforeEach(() => {
