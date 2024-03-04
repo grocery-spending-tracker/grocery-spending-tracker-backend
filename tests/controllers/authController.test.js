@@ -1,40 +1,52 @@
 import {expect, use} from 'chai';
 import chaiHttp from 'chai-http';
-import pool from '../src/db.js'; // Ensure this path matches the location of your actual db.js
-import Auth from '../src/util/authentication.js';
+import pool from '../../src/db.js';
+import Auth from '../../src/util/authentication.js';
 import sandbox from "sinon";
-import * as authController from "../src/controllers/authController.js"; // Ensure this path matches your actual signToken function
+
+import * as authController from "../../src/controllers/authController.js";
 
 use(chaiHttp);
 
-describe('Test /auth/ controller', () => {
+/**
+ * Tests for FRT-M7
+ */
+describe('FRT-M7: Test authController Authentication module', () => {
 
-    describe( 'Test login()', () => {
+    /**
+     * Tests for FRT-M7-6
+     */
+    describe( 'FRT-M7-6: Test login()', () => {
 
         let req, res, statusCode, send, json, poolStub, signTokenStub;
 
         beforeEach(() => {
-            statusCode = 200; // Default status code for successful responses
+            statusCode = 200;
             send = sandbox.spy();
             json = sandbox.spy();
             res = { send, status: sandbox.stub().returns({ json, send }), json };
 
-            // Replace your actual implementations with stubs
             poolStub = sandbox.stub(pool, 'query');
             signTokenStub = sandbox.stub(Auth, 'signToken').resolves('mockToken');
         });
 
         afterEach(() => {
-            sandbox.restore(); // Restore original functionality after each test
+            sandbox.restore();
         });
 
-        it('should respond with user data and a token for valid credentials', async () => {
+        /**
+         * FRT-M7-6a
+         * Initial State: calling user exists in db
+         * Input: valid user email and password
+         * Output: json object with user_id and JWT token
+         * Derivation: user should be able to receive a JWT token when logging in with their credentials
+         */
+        it('FRT-M7-6a: should respond with user data and a token for valid credentials', async () => {
             const mockUserData = { email: 'test@example.com', password: 'password' };
             const mockDbResponse = {
                 rows: [{ user_id: '123', email: 'test@example.com' }]
             };
 
-            // Setup stub to mimic database response
             poolStub.resolves(mockDbResponse);
             req = { body: mockUserData };
 
@@ -45,7 +57,14 @@ describe('Test /auth/ controller', () => {
             expect(json.calledWith(sandbox.match({ user_id: '123', email: 'test@example.com', token: 'mockToken' }))).to.be.true;
         });
 
-        it('should respond with 500 and an error message for invalid credentials', async () => {
+        /**
+         * FRT-M7-6b
+         * Initial State: calling user exists in db
+         * Input: invalid user email and password
+         * Output: 500 Incorrect credentials
+         * Derivation: user should not receive a JWT token when logging in with the wrong credentials
+         */
+        it('FRT-M7-6b: should respond with 500 and an error message for invalid credentials', async () => {
             const mockUserData = { email: 'wrong@example.com', password: 'password' };
             const mockDbResponse = { rows: [] }; // No user found
 
@@ -59,10 +78,17 @@ describe('Test /auth/ controller', () => {
             expect(send.calledWith('Incorrect credentials for user: wrong@example.com')).to.be.true;
         });
 
-        it('should handle server errors gracefully', async () => {
+        /**
+         * FRT-M7-6c
+         * Initial State: N/A
+         * Input: N/A
+         * Output: 500 Database Error
+         * Derivation: N/A
+         */
+        it('FRT-M7-6c: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
 
-            poolStub.rejects(error); // Simulate an error during database query
+            poolStub.rejects(error);
             req = { body: { email: 'test@example.com', password: 'password' } };
 
             await authController.login(req, res);

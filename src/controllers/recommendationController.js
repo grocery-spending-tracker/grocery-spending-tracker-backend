@@ -8,7 +8,6 @@ import Auth from "../util/authentication.js";
  */
 async function getFrequentlyPurchasedItems(userId) {
     try {
-        const client = await pool.connect();
         const query = `
             SELECT 
                 ci.item_key,
@@ -25,9 +24,8 @@ async function getFrequentlyPurchasedItems(userId) {
             ORDER BY frequency DESC, MIN(ci.price) ASC
             LIMIT 10;
         `;
-        const result = await client.query(query, [userId]);
-        client.release();
-    
+        const result = await pool.query(query, [userId]);
+
         if (!result.rows.length) {
             return [];
         }
@@ -46,7 +44,6 @@ async function getFrequentlyPurchasedItems(userId) {
  */
 async function getLowestPriceFrequentlyPurchasedItems(userId) {
     try {
-        const client = await pool.connect();
         const query = `
             WITH lowest_prices AS (
                 SELECT item_key, MIN(price) AS lowest_price
@@ -68,9 +65,8 @@ async function getLowestPriceFrequentlyPurchasedItems(userId) {
             LIMIT 10;
         `;
 
-        const result = await client.query(query, [userId]);
-        client.release();
-    
+        const result = await pool.query(query, [userId]);
+
         if (!result.rows.length) {
             return [];
         }
@@ -88,7 +84,6 @@ async function getLowestPriceFrequentlyPurchasedItems(userId) {
  */
 async function getPopularItems() {
     try {
-        const client = await pool.connect();
         const query = `
             SELECT ci.item_key, ci.item_name, ci.image_url, t.location, t.date_time, count(*) AS frequency
             FROM classifiedItems ci
@@ -97,8 +92,7 @@ async function getPopularItems() {
             ORDER BY frequency DESC, ci.price ASC
             LIMIT 10;
         `;
-        const result = await client.query(query);
-        client.release();
+        const result = await pool.query(query);
         return result.rows;
     } catch (error) {
         console.error('Error fetching popular items:', error);
@@ -139,19 +133,15 @@ const getRecommendations = async (req, res) => {
 
         console.log("received request for get recommendation from ", callingUser);
 
-        // call singleRecommendation
         const recommendations = await recommendItems(callingUser); //userid
 
-        // console.log("not implemented yet :(");
-        // res.status(200).json({"message":"not implemented yet :("});
-
-        // let recommendation = {};
-        
         console.log('Query result:', recommendations);
         res.status(200).json(recommendations);
     } catch (err) {
-        console.error('Error executing query', err);
-        res.status(500).send('Database Error ' + err);
+        // console.error('Error executing query', err);
+        // res.status(500).send('Database Error ' + err);
+        console.error(err);
+        res.status(500).send('Server Error: ' + err);
     }
 };
 
@@ -162,19 +152,15 @@ const getRecommendationsLowestAvailable = async (req, res) => {
 
         console.log("received request for get recommendation from ", callingUser);
 
-        // call singleRecommendation
         const recommendations = await recommendLowestPriceItems(callingUser); //userid
 
-        // console.log("not implemented yet :(");
-        // res.status(200).json({"message":"not implemented yet :("});
-
-        // let recommendation = {};
-        
         console.log('Query result:', recommendations);
         res.status(200).json(recommendations);
     } catch (err) {
-        console.error('Error executing query', err);
-        res.status(500).send('Database Error ' + err);
+        // console.error('Error executing query', err);
+        // res.status(500).send('Database Error ' + err);
+        console.error(err);
+        res.status(500).send('Server Error: ' + err);
     }
 };
 

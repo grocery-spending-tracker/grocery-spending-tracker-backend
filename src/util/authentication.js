@@ -1,11 +1,16 @@
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 
-// const JWT_PUBLIC = process.env.JWT_PUBLIC.replace(/\\n/g, '\n') || fs.readFileSync('public_key.pem', 'utf8');
-// const JWT_PRIVATE = process.env.JWT_PRIVATE.replace(/\\n/g, '\n') || fs.readFileSync('private_key.pem', 'utf8');
+let JWT_PUBLIC;
+let JWT_PRIVATE;
 
-const JWT_PUBLIC = process.env.JWT_PUBLIC ? process.env.JWT_PUBLIC.replace(/\\n/g, '\n') : fs.readFileSync('public_key.pem', 'utf8');
-const JWT_PRIVATE = process.env.JWT_PRIVATE ? process.env.JWT_PRIVATE.replace(/\\n/g, '\n') : fs.readFileSync('private_key.pem', 'utf8');
+try{
+    JWT_PUBLIC = process.env.JWT_PUBLIC ? process.env.JWT_PUBLIC.replace(/\\n/g, '\n') : fs.readFileSync('public_key.pem', 'utf8');
+    JWT_PRIVATE = process.env.JWT_PRIVATE ? process.env.JWT_PRIVATE.replace(/\\n/g, '\n') : fs.readFileSync('private_key.pem', 'utf8');
+}catch(e){
+    console.log("WARNING: no RSA keys found!");
+}
+
 
 const signOptions = {
     expiresIn: '1h', // Token expires in 1 hour
