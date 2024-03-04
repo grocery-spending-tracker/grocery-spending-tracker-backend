@@ -105,135 +105,206 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
 
             await usersController.addTrip(req, res);
 
-            // expect(poolStub.calledOnce).to.be.true;
-            // expect(json.calledWith(sandbox.match(mockUserDataResponse))).to.be.true;
-
-
-
             const wantedCalls = poolStub.getCalls().filter(
                 (call) => call.args.length === 2
             );
 
             expect(wantedCalls.length === 9).to.be.true;
+            expect(authenticateRequestStub.calledWith(req, res)).to.be.true;
+            expect(json.calledWith(sandbox.match(mockUserDataResponseTrip))).to.be.true;
         });
-    //
-    //     /**
-    //      * FRT-M5-1b
-    //      * Initial State: N/A
-    //      * Input: N/A
-    //      * Output: 500 Database Error
-    //      * Derivation: N/A
-    //      */
-    //     it('FRT-M5-1b: should handle server errors gracefully', async () => {
-    //         const error = new Error('Mock error for test');
-    //         const mockUserData = {
-    //             params:{ userId:123 },
-    //             headers:{ auth:"mockToken" },
-    //             body:{}
-    //         };
-    //
-    //         poolStub.rejects(error); // Simulate an error during database query
-    //         req = mockUserData;
-    //
-    //         await usersController.setGoal(req, res);
-    //
-    //         expect(poolStub.calledOnce).to.be.true;
-    //         expect(res.status.calledWith(500)).to.be.true;
-    //         expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
-    //     });
-    // });
-    //
-    // /**
-    //  * Tests for FRT-M5-2
-    //  */
-    // describe( 'FRT-M5-2: Test getGoals()', () => {
-    //
-    //     /**
-    //      * FRT-M5-2a
-    //      * Initial State: goals mapped to user
-    //      * Input: JWT token in header
-    //      * Output: a list of all the users goals
-    //      * Derivation: user should be able to get all of their goals
-    //      */
-    //     it('FRT-M5-2a: should respond with a list of the goals mapped to a user', async () => {
-    //         req = {
-    //             params:{ userId:123 },
-    //             headers:{ auth:"mockToken" },
-    //             body:{}
-    //         };
-    //         const mockUserDataResponse = [
-    //             {
-    //                 "goal_id": 7,
-    //                 "user_id": 11,
-    //                 "start_date": "2023-01-21T05:00:00.000Z",
-    //                 "end_date": "2024-01-21T05:00:00.000Z",
-    //                 "budget": "1099.00",
-    //                 "category": null,
-    //                 "goal_name": "Goal",
-    //                 "goal_desc": "no description",
-    //                 "periodic": false
-    //             },
-    //             {
-    //                 "goal_id": 10,
-    //                 "user_id": 11,
-    //                 "start_date": "2023-01-21T05:00:00.000Z",
-    //                 "end_date": "2024-01-21T05:00:00.000Z",
-    //                 "budget": "1099.00",
-    //                 "category": null,
-    //                 "goal_name": "gasoiol",
-    //                 "goal_desc": "destudbiuwdybclewuic",
-    //                 "periodic": true
-    //             },
-    //             {
-    //                 "goal_id": 11,
-    //                 "user_id": 11,
-    //                 "start_date": "2023-01-21T05:00:00.000Z",
-    //                 "end_date": "2024-01-21T05:00:00.000Z",
-    //                 "budget": "1099.00",
-    //                 "category": null,
-    //                 "goal_name": "gasoiol",
-    //                 "goal_desc": "destudbiuwdybclewuic",
-    //                 "periodic": true
-    //             }
-    //         ];
-    //         const mockDbResponse = {
-    //             rows: mockUserDataResponse
-    //         };
-    //
-    //         poolStub.resolves(mockDbResponse);
-    //
-    //         await usersController.getGoals(req, res);
-    //
-    //         expect(poolStub.calledOnce).to.be.true;
-    //         expect(authenticateRequestStub.calledWith(req, res)).to.be.true;
-    //         expect(json.calledWith(sandbox.match(mockUserDataResponse))).to.be.true;
-    //     });
-    //
-    //     /**
-    //      * FRT-M5-2b
-    //      * Initial State: N/A
-    //      * Input: N/A
-    //      * Output: 500 Database Error
-    //      * Derivation: N/A
-    //      */
-    //     it('FRT-M5-2b: should handle server errors gracefully', async () => {
-    //         const error = new Error('Mock error for test');
-    //         const mockUserData = {
-    //             params:{ userId:123 },
-    //             headers:{ auth:"mockToken" },
-    //             body:{}
-    //         };
-    //
-    //         poolStub.rejects(error); // Simulate an error during database query
-    //         req = mockUserData;
-    //
-    //         await usersController.getGoals(req, res);
-    //
-    //         expect(poolStub.calledOnce).to.be.true;
-    //         expect(res.status.calledWith(500)).to.be.true;
-    //         expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
-    //     });
-    // });
+
+
+
+        /**
+         * FRT-M3-1b
+         * Initial State: N/A
+         * Input: N/A
+         * Output: 500 Database Error
+         * Derivation: N/A
+         */
+        it('FRT-M5-1b: should handle server errors gracefully', async () => {
+            const error = new Error('Mock error for test');
+            const mockUserData = {
+                params:{ userId:123 },
+                headers:{ auth:"mockToken" },
+                body:{}
+            };
+
+            poolStub.rejects(error); // Simulate an error during database query
+            req = mockUserData;
+
+            await usersController.addTrip(req, res);
+
+            expect(poolStub.calledOnce).to.be.true;
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
+        });
+    });
+
+
+    /**
+     * Tests for FRT-M3-2
+     */
+    describe( 'FRT-M3-2: Test getTrips()', () => {
+
+        /**
+         * FRT-M3-2a
+         * Initial State: trips mapped to user
+         * Input: JWT token in header
+         * Output: a list of all the users trips
+         * Derivation: user should be able to get all of their previous trips
+         */
+        it('FRT-M3-2a: should respond with a list of the trips mapped to a user', async () => {
+            req = {
+                params:{ userId:123 },
+                headers:{ auth:"mockToken" },
+                body:{}
+            };
+            const mockEndpointResponse = [
+                {
+                    "trip_id": 45,
+                    "user_id": 11,
+                    "date_time": "2022-01-09T15:28:57.000Z",
+                    "location": "FORTINOS (1579 Main Street West)",
+                    "subtotal": "22.73",
+                    "total": "22.73",
+                    "trip_desc": "",
+                    "items": [
+                        {
+                            "item_id": 86,
+                            "trip_id": 45,
+                            "item_desc": "LEAN GRND BEEF",
+                            "price": "8.99",
+                            "taxed": false,
+                            "item_key": "2003040"
+                        }
+                    ]
+                },
+                {
+                    "trip_id": 8,
+                    "user_id": 11,
+                    "date_time": "2024-01-01T19:30:00.000Z",
+                    "location": "1579 Main St W, Hamilton, ON L8S 1E6",
+                    "subtotal": "34.77",
+                    "total": "39.99",
+                    "trip_desc": "baar and lotte run",
+                    "items": [
+                        {
+                            "item_id": 13,
+                            "trip_id": 8,
+                            "item_desc": "TESvwEVwT",
+                            "price": "24.99",
+                            "taxed": true,
+                            "item_key": null
+                        },
+                        {
+                            "item_id": 14,
+                            "trip_id": 8,
+                            "item_desc": "TESTwevwE2",
+                            "price": "9.78",
+                            "taxed": true,
+                            "item_key": null
+                        }
+                    ]
+                }
+            ];
+
+            const mockTripDataResponse = [
+                {
+                    "trip_id": 45,
+                    "user_id": 11,
+                    "date_time": "2022-01-09T15:28:57.000Z",
+                    "location": "FORTINOS (1579 Main Street West)",
+                    "subtotal": "22.73",
+                    "total": "22.73",
+                    "trip_desc": "",
+                },
+                {
+                    "trip_id": 8,
+                    "user_id": 11,
+                    "date_time": "2024-01-01T19:30:00.000Z",
+                    "location": "1579 Main St W, Hamilton, ON L8S 1E6",
+                    "subtotal": "34.77",
+                    "total": "39.99",
+                    "trip_desc": "baar and lotte run",
+                }
+            ];
+
+            const itemsFirst = [
+                {
+                    "item_id": 86,
+                    "trip_id": 45,
+                    "item_desc": "LEAN GRND BEEF",
+                    "price": "8.99",
+                    "taxed": false,
+                    "item_key": "2003040"
+                }
+            ];
+
+            const itemsSecond = [
+                {
+                    "item_id": 13,
+                    "trip_id": 8,
+                    "item_desc": "TESvwEVwT",
+                    "price": "24.99",
+                    "taxed": true,
+                    "item_key": null
+                },
+                {
+                    "item_id": 14,
+                    "trip_id": 8,
+                    "item_desc": "TESTwevwE2",
+                    "price": "9.78",
+                    "taxed": true,
+                    "item_key": null
+                }
+            ];
+
+
+            const queryTrip = 'SELECT * FROM trips WHERE user_id = $1 ORDER BY date_time, trip_id';
+            const itemsQuery = `SELECT * FROM items WHERE trip_id = $1;`;
+
+            poolStub.withArgs(queryTrip, sandbox.match.any).resolves({rows: mockTripDataResponse});
+            poolStub.withArgs(itemsQuery, sandbox.match([mockTripDataResponse[0]["trip_id"]])).resolves({rows: itemsFirst});
+            poolStub.withArgs(itemsQuery, sandbox.match([mockTripDataResponse[1]["trip_id"]])).resolves({rows: itemsSecond});
+
+            await usersController.getTrips(req, res);
+
+            const wantedCalls = poolStub.getCalls().filter(
+                (call) => call.args.length === 2
+            );
+
+            expect(wantedCalls.length === 3).to.be.true;
+            expect(authenticateRequestStub.calledWith(req, res)).to.be.true;
+            expect(json.calledWith(sandbox.match(mockEndpointResponse))).to.be.true;
+        });
+
+        /**
+         * FRT-M3-2b
+         * Initial State: N/A
+         * Input: N/A
+         * Output: 500 Database Error
+         * Derivation: N/A
+         */
+        it('FRT-M3-2b: should handle server errors gracefully', async () => {
+            const error = new Error('Mock error for test');
+            const mockUserData = {
+                params:{ userId:123 },
+                headers:{ auth:"mockToken" },
+                body:{}
+            };
+
+            poolStub.rejects(error); // Simulate an error during database query
+            req = mockUserData;
+
+            await usersController.getGoals(req, res);
+
+            expect(poolStub.calledOnce).to.be.true;
+            expect(res.status.calledWith(500)).to.be.true;
+            expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
+        });
+    });
     //
     // /**
     //  * Tests for FRT-M5-3
@@ -301,6 +372,6 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
     //         expect(res.status.calledWith(500)).to.be.true;
     //         expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
     //     });
-    });
+    // });
 
 });

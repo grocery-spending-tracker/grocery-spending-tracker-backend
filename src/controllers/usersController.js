@@ -189,12 +189,25 @@ const addTrip = async (req, res) => {
         const query = 'INSERT INTO trips (user_id, date_time, location, subtotal, total, trip_desc) VALUES ($1, $2, $3, $4, $5, $6) RETURNING trip_id';
         const values = [callingUser, tripData.date_time, tripData.location, tripData.subtotal, tripData.total, tripData.trip_desc];
 
-        const result = await pool.query(query, values); // Use await to wait for the query to finish
-        const tripId = result.rows[0]["trip_id"];
+        let tripId;
+
+        try{
+            const result = await pool.query(query, values); // Use await to wait for the query to finish
+            tripId = result.rows[0]["trip_id"];
+        }catch(err){
+            console.error('Error executing query', err);
+            res.status(500).send('Database Error when adding trip: ' + err);
+            return;
+        }
 
         // Assuming addItem is converted to an async function
         for (let item of tripData.items) {
-            await addItem(item, tripId); // Wait for each item to be added
+            try{
+                await addItem(item, tripId); // Wait for each item to be added
+            }catch(err){
+                res.status(500).send(err);
+                return;
+            }
         }
 
         console.log('Query result:', { trip_id: tripId });
@@ -239,9 +252,6 @@ async function addItem(item, tripId) {
     try{
         var itemCp = structuredClone(item);
         var classifiedItem = (await Classification.processItem([itemCp]))[0];
-
-        console.log("HERE");
-        console.log(classifiedItem);
 
         classifiedItem["item_desc"] = item["item_desc"];
         classifiedItem["item_key"] = item["item_key"];
