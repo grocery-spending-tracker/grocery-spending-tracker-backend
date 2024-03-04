@@ -28,18 +28,18 @@ describe('FRT-M5: Test usersController analytics module (with mocked db calls)',
     });
 
     /**
-     * Tests for FRT-M5-1
+     * Tests for FRT-M5-6
      */
-    describe( 'FRT-M5-1: Test setGoal()', () => {
+    describe( 'FRT-M5-6: Test setGoal()', () => {
 
         /**
-         * FRT-M5-1a
+         * FRT-M5-6a
          * Initial State: no goals mapped to user
          * Input: a json goal in body and JWT token in header
          * Output: the goal_id for the created goal
          * Derivation: user should be able to set a goal and add it to the db
          */
-        it('FRT-M5-1a: should respond with a the goal_id for the created goal', async () => {
+        it('FRT-M5-6a: should respond with a the goal_id for the created goal', async () => {
             req = {
                 params:{ userId:123 },
                 headers:{ auth:"mockToken" },
@@ -67,13 +67,13 @@ describe('FRT-M5: Test usersController analytics module (with mocked db calls)',
         });
 
         /**
-         * FRT-M5-1b
+         * FRT-M5-6b
          * Initial State: N/A
          * Input: N/A
          * Output: 500 Database Error
          * Derivation: N/A
          */
-        it('FRT-M5-1b: should handle server errors gracefully', async () => {
+        it('FRT-M5-6b: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
             const mockUserData = {
                 params:{ userId:123 },
@@ -93,18 +93,18 @@ describe('FRT-M5: Test usersController analytics module (with mocked db calls)',
     });
 
     /**
-     * Tests for FRT-M5-2
+     * Tests for FRT-M5-7
      */
-    describe( 'FRT-M5-2: Test getGoals()', () => {
+    describe( 'FRT-M5-7: Test getGoals()', () => {
 
         /**
-         * FRT-M5-2a
+         * FRT-M5-7a
          * Initial State: goals mapped to user
          * Input: JWT token in header
          * Output: a list of all the users goals
          * Derivation: user should be able to get all of their goals
          */
-        it('FRT-M5-2a: should respond with a list of the goals mapped to a user', async () => {
+        it('FRT-M5-7a: should respond with a list of the goals mapped to a user', async () => {
             req = {
                 params:{ userId:123 },
                 headers:{ auth:"mockToken" },
@@ -159,13 +159,13 @@ describe('FRT-M5: Test usersController analytics module (with mocked db calls)',
         });
 
         /**
-         * FRT-M5-2b
+         * FRT-M5-7b
          * Initial State: N/A
          * Input: N/A
          * Output: 500 Database Error
          * Derivation: N/A
          */
-        it('FRT-M5-2b: should handle server errors gracefully', async () => {
+        it('FRT-M5-7b: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
             const mockUserData = {
                 params:{ userId:123 },
@@ -185,18 +185,18 @@ describe('FRT-M5: Test usersController analytics module (with mocked db calls)',
     });
 
     /**
-     * Tests for FRT-M5-3
+     * Tests for FRT-M5-8
      */
-    describe( 'FRT-M5-3: Test deleteGoal()', () => {
+    describe( 'FRT-M5-8: Test deleteGoal()', () => {
 
         /**
-         * FRT-M5-3a
+         * FRT-M5-8a
          * Initial State: goals are mapped to user
          * Input: a goal_id to be deleted in the request params
          * Output: the body of the goal that was deleted
          * Derivation: user should be able to delete a goal of theirs
          */
-        it('FRT-M5-1a: should respond with a the goal_id for the created goal', async () => {
+        it('FRT-M5-8a: should respond with a the goal_id for the created goal', async () => {
             req = {
                 params:{ userId:123, goal_id:1 },
                 headers:{ auth:"mockToken" },
@@ -227,13 +227,13 @@ describe('FRT-M5: Test usersController analytics module (with mocked db calls)',
         });
 
         /**
-         * FRT-M5-1b
+         * FRT-M5-8b
          * Initial State: N/A
          * Input: N/A
          * Output: 500 Database Error
          * Derivation: N/A
          */
-        it('FRT-M5-1b: should handle server errors gracefully', async () => {
+        it('FRT-M5-8b: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
             const mockUserData = {
                 params:{ userId:123 },
@@ -241,7 +241,7 @@ describe('FRT-M5: Test usersController analytics module (with mocked db calls)',
                 body:{}
             };
 
-            poolStub.rejects(error); // Simulate an error during database query
+            poolStub.rejects(error);
             req = mockUserData;
 
             await usersController.setGoal(req, res);

@@ -28,19 +28,19 @@ describe('FRT-M7: Test util authentication module', () => {
     });
 
     /**
-     * Tests for FRT-M7-2
+     * Tests for FRT-M7-7
      */
-    describe( 'FRT-M7-2: Test authenticateRequest()', () => {
+    describe( 'FRT-M7-7: Test authenticateRequest()', () => {
 
         /**
-         * FRT-M7-2a
+         * FRT-M7-7a
          * Initial State: public key is held in server
          * Input: valid JWT token that is no expired
          * Output: user_id embedded in the JWT token
          * Derivation: server should be able to extract the user_id of the user from the JWT token provided in
          *  the request
          */
-        it('FRT-M7-2a: should respond with user_id from valid JWT token', async () => {
+        it('FRT-M7-7a: should respond with user_id from valid JWT token', async () => {
             req = { headers: { auth: "mockValidToken" } };
 
             verifyStub.withArgs("mockValidToken", sandbox.match.any, sandbox.match({ algorithm: ['RS256'] })).returns({username:123});
@@ -52,13 +52,13 @@ describe('FRT-M7: Test util authentication module', () => {
         });
 
         /**
-         * FRT-M7-2b
+         * FRT-M7-7b
          * Initial State: public key is held in server
          * Input: JWT token that is not valid
          * Output: 401 Unauthorized
          * Derivation: server should be not able to extract the user_id of the user from an invalid JWT token
          */
-        it('FRT-M7-2b: should respond with -1 from invalid JWT token', async () => {
+        it('FRT-M7-7b: should respond with -1 from invalid JWT token', async () => {
             req = { headers: { auth: "mockInvalidToken" } };
 
             const result = await Auth.authenticateRequest(req, res);
@@ -70,7 +70,7 @@ describe('FRT-M7: Test util authentication module', () => {
         });
 
         /**
-         * FRT-M7-2c
+         * FRT-M7-7c
          * Initial State: public key is held in server
          * Input: n/a
          * Output: 401 Unauthorized
@@ -89,18 +89,18 @@ describe('FRT-M7: Test util authentication module', () => {
     });
 
     /**
-     * Tests for FRT-M7-3
+     * Tests for FRT-M7-8
      */
-    describe( 'FRT-M7-3: Test signToken()', () => {
+    describe( 'FRT-M7-8: Test signToken()', () => {
 
         /**
-         * FRT-M7-3a
+         * FRT-M7-8a
          * Initial State: private key is held in server
          * Input: user_id of user requesting token
          * Output: valid JWT token with embedded user_id
          * Derivation: server should be able to sign a JWT token with a given user_id
          */
-        it('FRT-M7-3a: should respond with JWT token from user_id', async () => {
+        it('FRT-M7-8a: should respond with JWT token from user_id', async () => {
             signStub.returns("validJWTToken");
 
             const result = await Auth.signToken(123);
