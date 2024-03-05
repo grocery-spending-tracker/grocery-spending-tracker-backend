@@ -5,17 +5,15 @@
   "exports": "./src/app.js",
   "type": "module",
   "scripts": {
-    "test": "echo test",
+    "test": "npx mocha ./tests/**/*.test.js",
     "coverage": "npx c8 npm test",
-    "start": "printenv JWT_PUBLIC && node --env-file=.env src/app.js",
+    "start": "node --env-file=.env src/app.js",
     "clean": "rm -rf node_modules src/grocery-spending-tracker-classification/node_modules",
     "prime-azure": "apt-get install sudo -y && sudo apt update && sudo apt install postgresql-client -y && psql -h grocery-tracker-server.postgres.database.azure.com -p 5432 -U qeoeeroehl grocery-tracker-database"
   },
   "author": "ST, AF, RY, JN",
   "license": "ISC",
-  "mocha": {
-    "require": "mocha-suppress-logs"
-  },
+  "mocha": { "require": "mocha-suppress-logs" },
   "dependencies": {
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
