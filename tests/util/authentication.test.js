@@ -76,7 +76,7 @@ describe('FRT-M7: Test util authentication module', () => {
          * Output: 401 Unauthorized
          * Derivation: server should be not able to extract the user_id if there is no JWT token
          */
-        it('FRT-M7-2c: should respond with -1 from no JWT token', async () => {
+        it('FRT-M7-7c: should respond with -1 from no JWT token', async () => {
             req = { headers: {} };
 
             const result = await Auth.authenticateRequest(req, res);

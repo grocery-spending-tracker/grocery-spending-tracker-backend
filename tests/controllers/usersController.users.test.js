@@ -12,7 +12,7 @@ use(chaiHttp);
  * Tests for FRT-M6
  */
 describe('FRT-M6: Test usersController users module (with mocked db calls)', () => {
-    let req, res, statusCode, send, json, poolStub, authenticateRequestStub;
+    let req, res, statusCode, send, json, poolStub, authenticateRequestStub, processItemStub;
 
     beforeEach(() => {
         statusCode = 200;
@@ -20,7 +20,17 @@ describe('FRT-M6: Test usersController users module (with mocked db calls)', () 
         json = sandbox.spy();
         res = { send, status: sandbox.stub().returns({ json, send }), json };
 
+        const classifyItemResp = [{
+            price: 100.00,
+            list_price: 50.00,
+            brand: "testbrand",
+            name: "testname",
+            product_number: "testnumber",
+            image_url:"testurl"
+        }];
+
         poolStub = sandbox.stub(pool, 'query');
+        processItemStub = sandbox.stub(Classification, 'processItem').resolves(classifyItemResp);
         authenticateRequestStub = sandbox.stub(Auth, 'authenticateRequest').resolves(123);
     });
 
@@ -331,51 +341,20 @@ describe('FRT-M6: Test usersController users module (with mocked db calls)', () 
             expect(send.calledWith(sandbox.match(/^Database Error/))).to.be.true;
         });
     });
-});
-
-/**
- * Tests for FRT-M3
- */
-describe('FRT-M3: Test usersController receipt extraction module (with mocked db calls)', () => {
-    let req, res, statusCode, send, json, poolStub, authenticateRequestStub, processItemStub;
-
-    beforeEach(() => {
-        statusCode = 200;
-        send = sandbox.spy();
-        json = sandbox.spy();
-        res = { send, status: sandbox.stub().returns({ json, send }), json };
-
-        const classifyItemResp = [{
-            price: 100.00,
-            list_price: 50.00,
-            brand: "testbrand",
-            name: "testname",
-            product_number: "testnumber",
-            image_url:"testurl"
-        }];
-
-        poolStub = sandbox.stub(pool, 'query');
-        processItemStub = sandbox.stub(Classification, 'processItem').resolves(classifyItemResp);
-        authenticateRequestStub = sandbox.stub(Auth, 'authenticateRequest').resolves(123);
-    });
-
-    afterEach(() => {
-        sandbox.restore();
-    });
 
     /**
-     * Tests for FRT-M3-25
+     * Tests for FRT-M6-5
      */
-    describe( 'FRT-M3-25: Test addTrip()', () => {
+    describe( 'FRT-M6-5: Test addTrip()', () => {
 
         /**
-         * FRT-M3-1a
+         * FRT-M6-5a
          * Initial State: no trips set to user
          * Input: a json trip in body and JWT token in header
          * Output: the trip_id for the created trip; items are processed into classified items
          * Derivation: user should be able to set a trip and add it and all its items to the db
          */
-        it('FRT-M3-25a: should respond with a the trip_id for the created trip', async () => {
+        it('FRT-M6-5a: should respond with a the trip_id for the created trip', async () => {
             req = {
                 params:{ userId:123 },
                 headers:{ auth:"mockToken" },
@@ -438,13 +417,13 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
         });
 
         /**
-         * FRT-M3-25b
+         * FRT-M6-5b
          * Initial State: N/A
          * Input: N/A
          * Output: 500 Database Error
          * Derivation: N/A
          */
-        it('FRT-M3-25b: should handle server errors gracefully', async () => {
+        it('FRT-M6-5b: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
             const mockUserData = {
                 params:{ userId:123 },
@@ -464,18 +443,18 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
     });
 
     /**
-     * Tests for FRT-M3-26
+     * Tests for FRT-M6-6
      */
-    describe( 'FRT-M3-26: Test getTrips()', () => {
+    describe( 'FRT-M6-6: Test getTrips()', () => {
 
         /**
-         * FRT-M3-26a
+         * FRT-M6-6a
          * Initial State: trips mapped to user
          * Input: JWT token in header
          * Output: a list of all the users trips
          * Derivation: user should be able to get all of their previous trips
          */
-        it('FRT-M3-26a: should respond with a list of the trips mapped to a user', async () => {
+        it('FRT-M6-6a: should respond with a list of the trips mapped to a user', async () => {
             req = {
                 params:{ userId:123 },
                 headers:{ auth:"mockToken" },
@@ -601,13 +580,13 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
         });
 
         /**
-         * FRT-M3-26b
+         * FRT-M6-6b
          * Initial State: N/A
          * Input: N/A
          * Output: 500 Database Error
          * Derivation: N/A
          */
-        it('FRT-M3-26b: should handle server errors gracefully', async () => {
+        it('FRT-M6-6b: should handle server errors gracefully', async () => {
             const error = new Error('Mock error for test');
             const mockUserData = {
                 params:{ userId:123 },
@@ -626,4 +605,6 @@ describe('FRT-M3: Test usersController receipt extraction module (with mocked db
         });
     });
 });
+
+
 
