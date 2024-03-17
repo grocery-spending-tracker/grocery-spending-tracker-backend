@@ -17,6 +17,7 @@ router.delete("/goal/:goal_id", usersController.deleteGoal);
 // todo: separate?
 router.get("/trip", usersController.getTrips);
 router.post("/trip", usersController.addTrip);
+router.delete("/trip/:trip_id", usersController.stripTripOfUser)
 
 router.post("/", usersController.createNewUser);
 router.get("/", usersController.getUser);
