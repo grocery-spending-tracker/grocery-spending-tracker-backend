@@ -2,6 +2,7 @@ import pool from '../db.js';
 import Auth from "../util/authentication.js";
 //import classifyItem from '../classification/classifyItem.js';
 import Classification from "../grocery-spending-tracker-classification/src/main.js";
+import classifyItem from "grocery-spending-tracker-classification/src/classification/classifyItem.js";
 
 //todo: add better error returning
 const createNewUser = async (req, res) => {
@@ -283,6 +284,18 @@ async function addItem(item, tripId) {
     const item_query = 'INSERT INTO items (trip_id, item_desc, item_key, price, taxed) VALUES ($1, $2, $3, $4, $5) RETURNING item_id';
     const item_values = [tripId, item.item_desc, item.item_key, item.price, item.taxed];
 
+    classifyItemAsync(item, tripId); // intentional no await
+
+    try {
+        const result = await pool.query(item_query, item_values);
+        return result.rows[0]["item_id"];
+    } catch (err) {
+        console.error('Error executing query', err);
+        throw new Error('Database Error when adding item: ' + err);
+    }
+}
+
+async function classifyItemAsync(item, tripId) {
     try{
         var itemCp = structuredClone(item);
         var classifiedItem = (await Classification.processItem([itemCp]))[0];
@@ -305,14 +318,6 @@ async function addItem(item, tripId) {
         }
     }catch(e){
         console.log("Error classifying item: " + e);
-    }
-
-    try {
-        const result = await pool.query(item_query, item_values);
-        return result.rows[0]["item_id"];
-    } catch (err) {
-        console.error('Error executing query', err);
-        throw new Error('Database Error when adding item: ' + err);
     }
 }
 
