@@ -245,6 +245,40 @@ const getTrips = async (req, res) => {
     }
 };
 
+const stripTripOfUser = async (req, res) => {
+    try {
+        const trip_id = req.params["trip_id"];
+
+        const callingUser = await Auth.authenticateRequest(req, res);
+        if (callingUser < 0) return;
+
+        console.log("Received request to delete a trip: ", trip_id, " for user_id:", callingUser);
+
+        const query = 'UPDATE trips SET user_id = NULL WHERE trip_id = $2 AND user_id = $1 RETURNING trip_id';
+        const values = [callingUser, trip_id];
+
+        let result;
+        try{
+            result = await pool.query(query, values); // Use await to wait for the query to finish
+        }catch(err){
+            console.error('Error executing query', err);
+            res.status(500).send('Database Error when adding trip: ' + err);
+            return;
+        }
+
+        if(result.rows.length === 0){
+            res.status(500).send('no trip under user_id: ' + callingUser + " and trip_id: " + trip_id);
+            return;
+        }
+
+        console.log('Query result:', result.rows[0]);
+        res.status(200).json(result.rows[0]);
+    } catch (e) {
+        console.error(e);
+        res.status(500).send('Server error');
+    }
+};
+
 async function addItem(item, tripId) {
     const item_query = 'INSERT INTO items (trip_id, item_desc, item_key, price, taxed) VALUES ($1, $2, $3, $4, $5) RETURNING item_id';
     const item_values = [tripId, item.item_desc, item.item_key, item.price, item.taxed];
@@ -289,6 +323,7 @@ export {
     deleteUserById,
     addTrip,
     getTrips,
+    stripTripOfUser,
     setGoal,
     getGoals,
     deleteGoal

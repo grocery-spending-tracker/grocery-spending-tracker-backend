@@ -100,6 +100,9 @@ npm run coverage # run tests with coverage report
 ### `GET /users/trip` 
 >requires `auth = <jwt_token>` in header
 
+### `DELETE /users/trip/:trip_id`
+>requires `auth = <jwt_token>` in header
+
 ### `POST /users/goal`
 >requires `auth = <jwt_token>` in header
 ```json
