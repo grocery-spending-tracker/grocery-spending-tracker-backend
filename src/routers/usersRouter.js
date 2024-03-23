@@ -9,12 +9,11 @@ router.use((req, res, next) => {
     next();
 })
 
-// todo: separate?
 router.post("/goal", usersController.setGoal);
+router.patch("/goal/:goal_id", usersController.updateGoal);
 router.get("/goal", usersController.getGoals);
 router.delete("/goal/:goal_id", usersController.deleteGoal);
 
-// todo: separate?
 router.get("/trip", usersController.getTrips);
 router.post("/trip", usersController.addTrip);
 router.delete("/trip/:trip_id", usersController.stripTripOfUser)
