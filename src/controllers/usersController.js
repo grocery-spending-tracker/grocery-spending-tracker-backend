@@ -101,7 +101,6 @@ const deleteUserById = async (req, res) => {
     }
 };
 
-
 const setGoal = async (req, res) => {
     try {
         const goalData = req.body;
@@ -121,6 +120,33 @@ const setGoal = async (req, res) => {
             goalData["goal_desc"],
             goalData["periodic"]
         ];
+
+        const result = await pool.query(query, values);
+        console.log('Query result:', result.rows[0]);
+        res.status(200).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error executing query', err);
+        res.status(500).send('Database Error when adding trip: ' + err);
+    }
+};
+
+const updateGoal = async (req, res) => {
+    try {
+        const goal_id = req.params["goal_id"];
+
+        const goalData = req.body;
+
+        const callingUser = await Auth.authenticateRequest(req, res);
+        if (callingUser < 0) return;
+
+        console.log("received request to update goal for user_id:", callingUser, "\ngoal_id: ", goal_id, "\nbody: ", goalData);
+
+        const setClauses = Object.keys(goalData).map((key, index) => `${key} = $${index + 2}`).join(', ');
+
+        const query = `UPDATE goals SET ${setClauses} WHERE user_id = $1 RETURNING *`;
+        const values = [callingUser, ...Object.values(goalData)];
+
+        // do users check
 
         const result = await pool.query(query, values);
         console.log('Query result:', result.rows[0]);
@@ -331,5 +357,6 @@ export {
     stripTripOfUser,
     setGoal,
     getGoals,
+    updateGoal,
     deleteGoal
 };
