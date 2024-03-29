@@ -126,6 +126,12 @@ async function recommendLowestPriceItems(userId) {
     return frequentlyPurchased.slice(0, 3);
 }
 
+/**
+ * Returns recommendations for items the user frequently buys
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<Array<object>>} recommendations
+ */
 const getRecommendations = async (req, res) => {
     try {
         const callingUser = await Auth.authenticateRequest(req, res);
@@ -145,6 +151,12 @@ const getRecommendations = async (req, res) => {
     }
 };
 
+/**
+ * Returns recommendations with their lowest price and location
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<Array<object>>} recommendations with lowest prices
+ */
 const getRecommendationsLowestAvailable = async (req, res) => {
     try {
         const callingUser = await Auth.authenticateRequest(req, res);
