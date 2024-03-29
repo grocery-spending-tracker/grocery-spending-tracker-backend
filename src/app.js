@@ -1,5 +1,4 @@
 import express from 'express';
-
 import users from './routers/usersRouter.js';
 import auth from './routers/authenticationRouter.js';
 import recommendations from './routers/recommendationRouter.js';
@@ -14,7 +13,7 @@ app.use('/auth', auth);
 app.use('/recommendations', recommendations);
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Noting here!');
 });
 
 app.listen(port, () => {

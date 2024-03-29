@@ -4,7 +4,12 @@ import Auth from "../util/authentication.js";
 import Classification from "../grocery-spending-tracker-classification/src/main.js";
 import classifyItem from "grocery-spending-tracker-classification/src/classification/classifyItem.js";
 
-//todo: add better error returning
+/**
+ * Takes user object in body and adds to database
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<object>} user_id
+ */
 const createNewUser = async (req, res) => {
     try {
         const userData = req.body;
@@ -22,6 +27,12 @@ const createNewUser = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<object>} user object
+ */
 const getUser = async (req, res) => {
     try {
         const callingUser = await Auth.authenticateRequest(req, res);
@@ -48,6 +59,12 @@ const getUser = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header and user object in body, returns user object
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<object>} user object
+ */
 const updateUser = async (req, res) => {
     try {
         const userData = req.body;
@@ -76,6 +93,12 @@ const updateUser = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header and deletes user from db
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<object>} user object
+ */
 const deleteUserById = async (req, res) => {
     try {
         const callingUser = await Auth.authenticateRequest(req, res);
@@ -101,6 +124,12 @@ const deleteUserById = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header and goal object in body, adds goal to db
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<object>} goal_id
+ */
 const setGoal = async (req, res) => {
     try {
         const goalData = req.body;
@@ -130,6 +159,12 @@ const setGoal = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header, goal_id in params, and goal object in body, updates goal to db
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<object>} goal object
+ */
 const updateGoal = async (req, res) => {
     try {
         const goal_id = req.params["goal_id"];
@@ -157,6 +192,12 @@ const updateGoal = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header and returns all goal objects referencing user in jwt
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<Array<object>>} list of all user goals
+ */
 const getGoals = async (req, res) => {
     try {
         const callingUser = await Auth.authenticateRequest(req, res);
@@ -177,6 +218,12 @@ const getGoals = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header and goal_id in params, returns goal after deleting from db
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<object>} goal object
+ */
 const deleteGoal = async (req, res) => {
     try {
         const goal_id = req.params["goal_id"];
@@ -204,6 +251,12 @@ const deleteGoal = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header and trip object in body, adds trip to db
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<object>} trip_id
+ */
 const addTrip = async (req, res) => {
     try {
         const tripData = req.body;
@@ -227,7 +280,7 @@ const addTrip = async (req, res) => {
             return;
         }
 
-        // Assuming addItem is converted to an async function
+        // add items to db referencing new trip
         for (let item of tripData.items) {
             try{
                 await addItem(item, tripId); // Wait for each item to be added
@@ -245,6 +298,12 @@ const addTrip = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header and returns all trips referencing the user_id in jwt
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<Array<object>>} list of all trips
+ */
 const getTrips = async (req, res) => {
     try {
         const callingUser = await Auth.authenticateRequest(req, res);
@@ -272,6 +331,12 @@ const getTrips = async (req, res) => {
     }
 };
 
+/**
+ * Takes JWT token in header and trip_id in param, removes reference to user in specified trip
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<object>} trip_id
+ */
 const stripTripOfUser = async (req, res) => {
     try {
         const trip_id = req.params["trip_id"];
@@ -306,10 +371,17 @@ const stripTripOfUser = async (req, res) => {
     }
 };
 
+/**
+ * adds item to table referencing given trip_id
+ * @param item
+ * @param tripId
+ * @returns {Promise<object>} item_id
+ */
 async function addItem(item, tripId) {
     const item_query = 'INSERT INTO items (trip_id, item_desc, item_key, price, taxed) VALUES ($1, $2, $3, $4, $5) RETURNING item_id';
     const item_values = [tripId, item.item_desc, item.item_key, item.price, item.taxed];
 
+    // omit await so that classify does not hold up http response
     classifyItemAsync(item, tripId); // intentional no await
 
     try {
@@ -321,8 +393,15 @@ async function addItem(item, tripId) {
     }
 }
 
+/**
+ * classifies item and adds to classification table referencing given trip_id
+ * @param item
+ * @param tripId
+ * @returns {Promise<object>} classified_item_id
+ */
 async function classifyItemAsync(item, tripId) {
     try{
+        // classify item
         var itemCp = structuredClone(item);
         var classifiedItem = (await Classification.processItem([itemCp]))[0];
 
