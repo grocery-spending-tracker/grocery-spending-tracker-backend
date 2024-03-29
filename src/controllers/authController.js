@@ -1,6 +1,12 @@
 import pool from '../db.js';
 import Auth from '../util/authentication.js';
 
+/**
+ * Take body containing email and password and returns JWT token
+ * @param req http_req
+ * @param res http_res
+ * @returns {Promise<string>} jwt token
+ */
 const login = async (req, res) => {
     try {
         const userData = req.body;
